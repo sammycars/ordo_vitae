@@ -14,13 +14,12 @@ class DevView {
             { hex: '#ff4444', name: 'red' },
             { hex: '#ff8844', name: 'orange' },
             { hex: '#d2b48c', name: 'tan' },
-            { hex: '#44ff44', name: 'green' },
+            { hex: '#00ff88', name: 'mint' },
             { hex: '#44eeff', name: 'cyan' },
             { hex: '#4444ff', name: 'blue' },
             { hex: '#ff44ff', name: 'magenta' },
             { hex: '#ff4488', name: 'pink' },
-            { hex: '#ffffff', name: 'white' },
-            { hex: '#00ff88', name: 'mint' }
+            { hex: '#ffffff', name: 'white' }
         ];
         
         const html = `
