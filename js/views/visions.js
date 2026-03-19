@@ -113,7 +113,7 @@ class VisionsView {
             const { data, error } = await client
                 .from('ordovision')
                 .select('*')
-                .match({ user_id: user.id });
+                .filter('user_id', 'eq', user.id);
             
             if (error) throw error;
             return data || [];
