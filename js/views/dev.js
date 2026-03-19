@@ -59,6 +59,16 @@ class DevView {
                             <span style="color: #666; font-size: 14px;">(grey)</span><button class="btn btn-disabled" disabled>[ Disabled ]</button>
                             <span style="color: #00ff88; font-size: 14px;">(mint)</span><button class="btn btn-active">[ Active ]</button>
                         </div>
+                        
+                        <strong style="margin-top: var(--space-lg); display: block;">Buttons (actions):</strong>
+                        <div style="display: flex; gap: var(--space-md); flex-wrap: wrap; margin-top: var(--space-sm); align-items: center;">
+                            <span style="color: #ffffff; font-size: 14px;">(white)</span><button class="btn" style="color: #ffffff;">[ Edit ]</button>
+                            <span style="color: #44eeff; font-size: 14px;">(cyan)</span><button class="btn" style="color: #44eeff;">[ Save ]</button>
+                            <span style="color: #00ff88; font-size: 14px;">(mint)</span><button class="btn">[ Saved ]</button>
+                            <span style="color: #ff44ff; font-size: 14px;">(magenta)</span><button class="btn" style="color: #ff44ff;">[ New ]</button>
+                            <span style="color: #ff4444; font-size: 14px;">(red)</span><button class="btn btn-danger">[ Delete ]</button>
+                            <span style="color: #ff8844; font-size: 14px;">(orange)</span><button class="btn" style="color: #ff8844;">[ Unschedule ]</button>
+                        </div>
                     </div>
                     
                     <!-- Right: Colors -->
