@@ -49,6 +49,16 @@ class DevView {
                                 </div>`
                             ).join('')}
                         </div>
+                        
+                        <strong style="margin-top: var(--space-lg); display: block;">Buttons (style):</strong>
+                        <div style="display: flex; gap: var(--space-md); flex-wrap: wrap; margin-top: var(--space-sm);">
+                            <button class="btn">[ Primary ]</button>
+                            <button class="btn btn-secondary">[ Secondary ]</button>
+                            <button class="btn btn-danger">[ Danger ]</button>
+                            <button class="btn btn-sm">[ Small ]</button>
+                            <button class="btn btn-disabled" disabled>[ Disabled ]</button>
+                            <button class="btn btn-active">[ Active ]</button>
+                        </div>
                     </div>
                     
                     <!-- Right: Colors -->
