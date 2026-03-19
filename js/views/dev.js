@@ -20,7 +20,7 @@ class DevView {
             { hex: '#ff44ff', name: 'magenta' },
             { hex: '#ff4488', name: 'pink' },
             { hex: '#ffffff', name: 'white' },
-            { hex: '#666666', name: 'gray' }
+            { hex: '#666666', name: 'grey' }
         ];
         
         const html = `
