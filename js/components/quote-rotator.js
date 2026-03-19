@@ -12,6 +12,7 @@ class QuoteRotator {
         this.quoteElement = document.getElementById('quote-text');
         this.quoteContainer = document.getElementById('quote-container');
         this.quoteInterval = null;
+        this.isRotating = false;
     }
 
     /**
@@ -46,11 +47,13 @@ class QuoteRotator {
      * Rotate to next quote with fade effect
      */
     rotateQuote() {
-        if (!this.quoteElement) return;
+        if (!this.quoteElement || this.isRotating) return;
         
         const quote = this.getRandomQuote();
         if (!quote) return;
 
+        this.isRotating = true;
+        
         // Fade out
         this.quoteElement.classList.add('fade-out');
 
@@ -61,6 +64,11 @@ class QuoteRotator {
             
             // Fade in
             this.quoteElement.classList.remove('fade-out');
+            
+            // Reset rotating flag after fade completes
+            setTimeout(() => {
+                this.isRotating = false;
+            }, 1000);
         }, 1000); // Wait for fade out to complete
     }
 
