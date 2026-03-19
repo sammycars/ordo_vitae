@@ -36,6 +36,7 @@ class Auth {
 
         // Listen for auth state changes
         this.supabase.onAuthChange((event, session) => {
+            console.log('Auth event:', event, session ? 'user logged in' : 'no session');
             if (session) {
                 this.currentUser = session.user;
                 this.showDashboard();
@@ -45,20 +46,21 @@ class Auth {
             }
         });
 
-        // Check for existing session
-        try {
-            const user = await this.supabase.getUser();
-            if (user) {
-                this.currentUser = user;
-                this.showDashboard();
-            } else {
+        // Check for existing session - wait for auth to initialize
+        setTimeout(async () => {
+            try {
+                const { data: { session } } = await this.supabase.getClient().auth.getSession();
+                if (session) {
+                    this.currentUser = session.user;
+                    this.showDashboard();
+                } else {
+                    this.showLogin();
+                }
+            } catch (err) {
+                console.error('Auth check failed:', err);
                 this.showLogin();
             }
-        } catch (err) {
-            console.error('Auth check failed:', err);
-            this.showLogin();
-        }
-    }
+        }, 500);
 
     /**
      * Handle login
