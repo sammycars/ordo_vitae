@@ -6,7 +6,7 @@
 
 ## Phase 1: Foundation
 
-- [ ] **1.1** Create GitHub repository for Ordo_Vitae
+- [x] **1.1** Create GitHub repository for Ordo_Vitae
 - [ ] **1.2** Clone repo to VPS/local and set up basic folder structure
 - [ ] **1.3** Create `README.md` with project overview and architecture summary
 - [ ] **1.4** Set up Supabase project (or use existing)
