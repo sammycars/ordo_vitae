@@ -154,6 +154,8 @@ body {
     font-style: italic;
     opacity: 1;
     transition: opacity 1s ease-in-out;
+    text-wrap: balance;
+    line-height: 1.4;
 }
 
 .quote-text.fade-out {
