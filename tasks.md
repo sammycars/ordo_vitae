@@ -1,6 +1,7 @@
 # Ordo_Vitae — Project Tasks
 
 > Phoenix rebuilt right. See `/projects/websites/design-principles.md` for the governing principles.
+> **Current Version:** v0.2
 
 ---
 
@@ -9,15 +10,15 @@
 - [x] **1.1** Create GitHub repository for Ordo_Vitae
 - [x] **1.2** Clone repo to VPS/local and set up basic folder structure
 - [x] **1.3** Create `README.md` with project overview and architecture summary
-- [x] **1.4** Set up Supabase project (or use existing)
-- [ ] **1.5** Apply design principles: JetBrains Mono font, text-based buttons, minimalist aesthetic
+- [x] **1.4** Set up Supabase project
+- [x] **1.5** Apply design principles: JetBrains Mono font, text-based buttons, minimalist aesthetic
 
 ## Phase 2: Data Schema
 
 - [x] **2.1** Design database schema following Section 5 principles (`USER_*`, `GOAL_*` naming)
 - [x] **2.2** Create migrations for core tables (users, goals, tasks, etc.)
 - [x] **2.3** Enable RLS (Row Level Security) on all tables
-- [ ] **2.4** Document schema in `docs/database.md` (meta documentation)
+- [x] **2.4** Document schema in `docs/schema.md` and `docs/schema.sql`
 
 ## Phase 3: Core UI
 
@@ -28,11 +29,14 @@
 
 ## Phase 4: Features
 
-- [ ] **4.1** Implement visions (3-Year, Fear, 1-Year) — per Phoenix design
-- [ ] **4.2** Implement quarterly goals
-- [ ] **4.3** Implement weekly planning
-- [ ] **4.4** Implement daily planning
-- [ ] **4.5** Add agent integration (optional — agents can read/write goals)
+- [x] **4.1** Implement visions (3-Year, Fear, 1-Year) with Save/Edit workflow
+- [ ] **4.2** Implement Goals
+- [ ] **4.3** Implement Actions
+- [ ] **4.4** Implement Quarters
+- [ ] **4.5** Implement Weeks
+- [ ] **4.6** Implement Days
+- [ ] **4.7** Implement Habits
+- [ ] **4.8** Implement Todos/Tasks
 
 ## Phase 5: Polish & Launch
 
@@ -44,4 +48,26 @@
 
 ---
 
-> Each task should be a Git branch → PR → merge cycle as the project scales.
+## What's Working (v0.2)
+
+- Login/Auth with Supabase
+- Session persistence
+- Font size controls (Dev tab)
+- Color palette display (Dev tab)
+- Quote rotator (Marcus Aurelius quotes)
+- Diagnostics status bar (Supabase, Variables, JavaScript, DevConsole)
+- ObjectColor component (universal color logic based on scheduling state)
+- Visions: 3-Year, Fear, 1-Year with Save/Edit workflow
+
+## Known Issues
+
+- Vision save/load has RLS issues — needs fix for user_id handling
+- Need to continue implementing remaining features
+
+## Next Steps (when resuming)
+
+1. Fix visions save/load with proper user_id handling
+2. Implement Goals view
+3. Implement Actions view
+4. Implement Quarters view
+5. Continue with remaining features
