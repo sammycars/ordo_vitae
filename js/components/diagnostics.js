@@ -11,8 +11,33 @@ class Diagnostics {
         this.status = {
             supabase: 'checking',
             variables: 'checking',
-            javascript: 'ok'
+            javascript: 'ok',
+            devconsole: 'ok'
         };
+        this.errorCount = 0;
+        this.setupErrorTracking();
+    }
+
+    /**
+     * Set up tracking for console errors
+     */
+    setupErrorTracking() {
+        // Override console.error to track errors
+        const originalError = console.error;
+        console.error = (...args) => {
+            this.errorCount++;
+            // Call original
+            originalError.apply(console, args);
+        };
+        
+        // Track unhandled errors
+        window.addEventListener('error', () => {
+            this.errorCount++;
+        });
+        
+        window.addEventListener('unhandledrejection', () => {
+            this.errorCount++;
+        });
     }
 
     /**
@@ -22,6 +47,7 @@ class Diagnostics {
         await this.checkSupabase();
         this.checkVariables();
         this.checkJavaScript();
+        this.checkDevConsole();
         this.render();
     }
 
@@ -85,6 +111,17 @@ class Diagnostics {
     }
 
     /**
+     * Check for console errors
+     */
+    checkDevConsole() {
+        if (this.errorCount > 0) {
+            this.status.devconsole = 'error';
+        } else {
+            this.status.devconsole = 'ok';
+        }
+    }
+
+    /**
      * Render the diagnostics bar
      */
     render() {
@@ -100,6 +137,7 @@ class Diagnostics {
                 <span class="diag-item" style="color: ${colors[this.status.supabase]}">Supabase</span>
                 <span class="diag-item" style="color: ${colors[this.status.variables]}">Variables</span>
                 <span class="diag-item" style="color: ${colors[this.status.javascript]}">JavaScript</span>
+                <span class="diag-item" style="color: ${colors[this.status.devconsole]}">DevConsole</span>
             </div>
         `;
 
@@ -110,6 +148,9 @@ class Diagnostics {
             if (content) {
                 content.insertAdjacentHTML('beforeend', html);
             }
+        } else {
+            // Update existing
+            diag.outerHTML = html;
         }
     }
 }
