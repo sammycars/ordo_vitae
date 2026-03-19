@@ -2,6 +2,7 @@
  * Visions View - Ordo_Vitae
  * 
  * Handles the Visions tab: 3-Year, Fear, 1-Year
+ * Uses SaveableTextarea for persistence
  */
 
 class VisionsView {
@@ -9,7 +10,14 @@ class VisionsView {
         this.app = app;
     }
 
-    render() {
+    async render() {
+        // Load existing visions from Supabase
+        const visions = await this.loadVisions();
+        
+        const threeYear = visions.find(v => v.VISION_kind === 'three_year');
+        const fear = visions.find(v => v.VISION_kind === 'fear');
+        const oneYear = visions.find(v => v.VISION_kind === 'one_year');
+
         const html = `
             <div class="tabs">
                 <div class="tab active" data-tab="3year">3-Year Vision</div>
@@ -22,7 +30,20 @@ class VisionsView {
                     <div class="card-header">
                         <span class="card-title">3-Year Vision</span>
                     </div>
-                    <textarea class="input vision-input" placeholder="Write your 3-year vision..."></textarea>
+                    <div class="saveable-textarea">
+                        <textarea 
+                            class="input vision-input saveable-input" 
+                            placeholder="Write your 3-year vision..."
+                            data-table="ordovision"
+                            data-field="VISION_content"
+                            data-kind="three_year"
+                            data-id="${threeYear?.VISION_id || ''}"
+                        >${threeYear?.VISION_content || ''}</textarea>
+                        <div class="saveable-buttons">
+                            <button class="btn btn-save" onclick="window.ordoApp.saveVision(this)">[ Save ]</button>
+                            <span class="save-status"></span>
+                        </div>
+                    </div>
                 </div>
             </div>
             
@@ -31,7 +52,20 @@ class VisionsView {
                     <div class="card-header">
                         <span class="card-title">Fear Vision</span>
                     </div>
-                    <textarea class="input vision-input" placeholder="Write your fear vision..."></textarea>
+                    <div class="saveable-textarea">
+                        <textarea 
+                            class="input vision-input saveable-input" 
+                            placeholder="Write your fear vision..."
+                            data-table="ordovision"
+                            data-field="VISION_content"
+                            data-kind="fear"
+                            data-id="${fear?.VISION_id || ''}"
+                        >${fear?.VISION_content || ''}</textarea>
+                        <div class="saveable-buttons">
+                            <button class="btn btn-save" onclick="window.ordoApp.saveVision(this)">[ Save ]</button>
+                            <span class="save-status"></span>
+                        </div>
+                    </div>
                 </div>
             </div>
             
@@ -40,7 +74,20 @@ class VisionsView {
                     <div class="card-header">
                         <span class="card-title">1-Year Vision</span>
                     </div>
-                    <textarea class="input vision-input" placeholder="Write your 1-year vision..."></textarea>
+                    <div class="saveable-textarea">
+                        <textarea 
+                            class="input vision-input saveable-input" 
+                            placeholder="Write your 1-year vision..."
+                            data-table="ordovision"
+                            data-field="VISION_content"
+                            data-kind="one_year"
+                            data-id="${oneYear?.VISION_id || ''}"
+                        >${oneYear?.VISION_content || ''}</textarea>
+                        <div class="saveable-buttons">
+                            <button class="btn btn-save" onclick="window.ordoApp.saveVision(this)">[ Save ]</button>
+                            <span class="save-status"></span>
+                        </div>
+                    </div>
                 </div>
             </div>
         `;
@@ -48,6 +95,24 @@ class VisionsView {
         this.app.content.innerHTML = html;
         this.setupTabs();
         this.setupAutoResize();
+    }
+
+    /**
+     * Load visions from Supabase
+     */
+    async loadVisions() {
+        try {
+            const client = this.app.supabase.getClient();
+            const { data, error } = await client
+                .from('ordovision')
+                .select('*');
+            
+            if (error) throw error;
+            return data || [];
+        } catch (err) {
+            console.error('Failed to load visions:', err);
+            return [];
+        }
     }
 
     setupAutoResize() {

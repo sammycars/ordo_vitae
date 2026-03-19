@@ -108,6 +108,108 @@ class App {
     }
 
     /**
+     * Save textarea content to Supabase
+     */
+    async saveTextarea(btn) {
+        const container = btn.closest('.saveable-textarea');
+        const textarea = container.querySelector('.saveable-input');
+        const status = container.querySelector('.save-status');
+        
+        const table = textarea.dataset.table;
+        const field = textarea.dataset.field;
+        const id = textarea.dataset.id;
+        const value = textarea.value;
+        
+        btn.disabled = true;
+        btn.textContent = '[ Saving... ]';
+        
+        try {
+            const client = this.supabase.getClient();
+            
+            if (id) {
+                // Update existing
+                await client.from(table).update({ 
+                    [field]: value,
+                    updated_at: new Date().toISOString()
+                }).eq('id', id);
+            } else {
+                // Insert new
+                const { data, error } = await client.from(table).insert({
+                    [field]: value
+                });
+                
+                if (data && data[0]) {
+                    textarea.dataset.id = data[0].id;
+                }
+            }
+            
+            // Show saved
+            btn.textContent = '[ Saved ]';
+            btn.classList.add('btn-saved');
+            btn.disabled = true;
+            
+        } catch (err) {
+            console.error('Save failed:', err);
+            btn.textContent = '[ Save ]';
+            btn.disabled = false;
+            status.textContent = 'Save failed: ' + err.message;
+            status.style.color = 'var(--danger)';
+        }
+    }
+
+    /**
+     * Save vision (special case for VISION_kind)
+     */
+    async saveVision(btn) {
+        const container = btn.closest('.saveable-textarea');
+        const textarea = container.querySelector('.saveable-input');
+        const status = container.querySelector('.save-status');
+        
+        const table = textarea.dataset.table;
+        const field = textarea.dataset.field;
+        const kind = textarea.dataset.kind;
+        const id = textarea.dataset.id;
+        const value = textarea.value;
+        
+        btn.disabled = true;
+        btn.textContent = '[ Saving... ]';
+        
+        try {
+            const client = this.supabase.getClient();
+            
+            if (id) {
+                // Update existing
+                await client.from(table).update({ 
+                    [field]: value,
+                    VISION_updated_at: new Date().toISOString()
+                }).eq('id', id);
+            } else {
+                // Insert new
+                const { data, error } = await client.from(table).insert({
+                    VISION_kind: kind,
+                    [field]: value
+                });
+                
+                if (data && data[0]) {
+                    textarea.dataset.id = data[0].id;
+                }
+            }
+            
+            // Show saved
+            btn.textContent = '[ Saved ]';
+            btn.classList.add('btn-saved');
+            btn.disabled = true;
+            
+        } catch (err) {
+            console.error('Save failed:', err);
+            btn.textContent = '[ Save ]';
+            btn.disabled = false;
+            status.textContent = 'Save failed: ' + err.message;
+            status.style.color = 'var(--danger)';
+        }
+    }
+
+    /**
      * Get or create a view instance
      * @param {string} viewName 
      */

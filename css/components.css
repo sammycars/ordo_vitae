@@ -106,6 +106,32 @@
     line-height: 1.6;
 }
 
+/* Saveable textarea */
+.saveable-textarea {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+}
+
+.saveable-buttons {
+    display: flex;
+    gap: var(--space-md);
+    align-items: center;
+}
+
+.btn-save {
+    align-self: flex-start;
+}
+
+.btn-saved {
+    color: var(--accent);
+    cursor: default;
+}
+
+.save-status {
+    font-size: var(--font-size-sm);
+}
+
 /* Input group */
 .input-group {
     display: flex;
