@@ -164,6 +164,7 @@ body {
 
 input[type="email"],
 input[type="password"],
+input[type="password"],
 input[type="text"],
 input[type="number"],
 textarea,
@@ -187,6 +188,32 @@ select:focus {
 
 input::placeholder {
     color: var(--text-muted);
+}
+
+/* Password input with toggle */
+.password-input {
+    display: flex;
+    gap: var(--space-sm);
+}
+
+.password-input input {
+    flex: 1;
+}
+
+.btn-toggle {
+    font-family: var(--font-family);
+    font-size: var(--font-size-sm);
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--text-secondary);
+    cursor: pointer;
+    padding: var(--space-sm) var(--space-sm);
+    white-space: nowrap;
+}
+
+.btn-toggle:hover {
+    color: var(--accent);
+    border-color: var(--accent);
 }
 
 /* ============================================

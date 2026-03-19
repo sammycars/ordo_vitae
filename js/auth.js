@@ -15,6 +15,7 @@ class Auth {
         this.dashboardView = document.getElementById('dashboard-view');
         this.emailInput = document.getElementById('email');
         this.passwordInput = document.getElementById('password');
+        this.togglePasswordBtn = document.getElementById('toggle-password');
         this.loginBtn = document.getElementById('login-btn');
         this.signupBtn = document.getElementById('signup-btn');
         this.logoutBtn = document.getElementById('logout-btn');
@@ -28,6 +29,7 @@ class Auth {
         this.loginBtn.addEventListener('click', () => this.login());
         this.signupBtn.addEventListener('click', () => this.signup());
         this.logoutBtn.addEventListener('click', () => this.logout());
+        this.togglePasswordBtn.addEventListener('click', () => this.togglePassword());
 
         // Listen for auth state changes
         this.supabase.onAuthChange((event, session) => {
@@ -132,6 +134,15 @@ class Auth {
         
         const form = this.loginView.querySelector('.auth-form');
         form.insertBefore(msg, form.firstChild);
+    }
+
+    /**
+     * Toggle password visibility
+     */
+    togglePassword() {
+        const isPassword = this.passwordInput.type === 'password';
+        this.passwordInput.type = isPassword ? 'text' : 'password';
+        this.togglePasswordBtn.textContent = isPassword ? '[ Hide ]' : '[ Show ]';
     }
 
     /**
