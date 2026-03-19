@@ -73,6 +73,12 @@ class App {
     setupTheme() {
         const savedTheme = localStorage.getItem('ordo-theme') || 'dark';
         document.documentElement.setAttribute('data-theme', savedTheme);
+        
+        // Load saved font size
+        const savedSize = localStorage.getItem('ordo-font-size');
+        if (savedSize) {
+            document.documentElement.style.setProperty('--font-size-base', savedSize + 'px');
+        }
     }
 
     /**
@@ -83,6 +89,23 @@ class App {
         const next = current === 'dark' ? 'light' : 'dark';
         document.documentElement.setAttribute('data-theme', next);
         localStorage.setItem('ordo-theme', next);
+    }
+
+    /**
+     * Set font size
+     */
+    setFontSize(size, btn) {
+        // Update CSS variable
+        document.documentElement.style.setProperty('--font-size-base', size + 'px');
+        
+        // Update button states
+        document.querySelectorAll('.font-size-btn').forEach(b => {
+            b.classList.remove('active');
+        });
+        btn.classList.add('active');
+        
+        // Save preference
+        localStorage.setItem('ordo-font-size', size);
     }
 
     /**

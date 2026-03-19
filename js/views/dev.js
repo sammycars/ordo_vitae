@@ -18,9 +18,17 @@ class DevView {
                 <p class="text-muted" style="margin-bottom: var(--space-md);">
                     This is for development viewing and testing purposes only.
                 </p>
-                <div id="dev-content">
-                    <p class="placeholder">Dev tools will appear here...</p>
+                
+                <div class="font-size-controls" style="margin-bottom: var(--space-lg);">
+                    <strong>Font Size:</strong>
+                    <div class="font-size-options" style="display: flex; gap: var(--space-sm); margin-top: var(--space-sm); flex-wrap: wrap;">
+                        ${[8, 10, 12, 14, 16, 18].map((size, i) => 
+                            `<button class="btn btn-sm font-size-btn" data-size="${size}" onclick="window.ordoApp.setFontSize(${size}, this)">[ ${size} ]</button>`
+                        ).join('')}
+                    </div>
                 </div>
+                
+                <div id="dev-content"></div>
             </div>
         `;
         
