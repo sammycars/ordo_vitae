@@ -1,0 +1,20 @@
+{
+  "source": "Marcus Aurelius",
+  "quotes": [
+    { "text": "You have power over your mind — not outside events. Realize this, and you will find strength.", "theme": "strength" },
+    { "text": "The impediment to action advances action. What stands in the way becomes the way.", "theme": "action" },
+    { "text": "Never let the future disturb you. You will meet it, if you have to, with the same weapons of reason which today arm you against the present.", "theme": "future" },
+    { "text": "When you arise in the morning think of what a privilege it is to be alive, to think, to enjoy, to love.", "theme": "gratitude" },
+    { "text": "It is not that we have a short time to live, but that we waste a lot of it.", "theme": "time" },
+    { "text": "Very little is needed to make a happy life; it is all within yourself, in your way of thinking.", "theme": "happiness" },
+    { "text": "Confine yourself to the present.", "theme": "present" },
+    { "text": "Waste no more time arguing about what a good man should be. Be one.", "theme": "action" },
+    { "text": "Accept the things to which fate binds you, and love the people with whom fate brings you together.", "theme": "acceptance" },
+    { "text": "The best revenge is to be unlike him who performed the injury.", "theme": "character" },
+    { "text": "At dawn, when you have trouble getting out of bed, tell yourself: I have to go to work — as a human.", "theme": "duty" },
+    { "text": "If it is not right do not do it; if it is not true do not say it.", "theme": "integrity" },
+    { "text": "Dwell on the beauty of life. Watch the stars, and see yourself running with them.", "theme": "beauty" },
+    { "text": "Look back over the past, with its changing empires that rose and fell, and you can foresee the future too.", "theme": "perspective" },
+    { "text": "The object of life is not to be on the side of the majority, but to escape finding oneself in the ranks of the insane.", "theme": "individuality" }
+  ]
+}
