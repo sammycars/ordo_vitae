@@ -13,7 +13,7 @@ class DevView {
         const colors = [
             { hex: '#ff4444', name: 'red' },
             { hex: '#ff8844', name: 'orange' },
-            { hex: '#d2b48c', name: 'tan' },
+            { hex: '#ffff00', name: 'yellow' },
             { hex: '#44eeff', name: 'cyan' },
             { hex: '#00ff88', name: 'mint' },
             { hex: '#4444ff', name: 'blue' },
