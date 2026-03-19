@@ -48,9 +48,9 @@ class DevView {
                     <!-- Right: Colors -->
                     <div class="color-section" style="flex: 1; min-width: 300px;">
                         <strong>Colors:</strong>
-                        <div class="color-preview" style="display: flex; flex-direction: column; gap: 2px; margin-top: var(--space-sm);">
+                        <div class="color-preview" style="display: flex; flex-direction: column; gap: 4px; margin-top: var(--space-sm);">
                             ${colors.map((color, i) => 
-                                `<div style="display: flex; justify-content: space-between; background: ${color}; padding: 4px 8px; font-size: 14px;">
+                                `<div style="display: flex; justify-content: space-between; padding: 4px 8px; font-size: 14px; color: ${color};">
                                     <span>Confine yourself to the present.</span>
                                     <span style="font-weight: bold;">#${i + 1}</span>
                                 </div>`
