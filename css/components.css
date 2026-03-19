@@ -130,6 +130,11 @@
 
 .save-status {
     font-size: var(--font-size-sm);
+    color: var(--accent);
+}
+
+.save-status.unsaved {
+    color: var(--warning);
 }
 
 /* Input group */

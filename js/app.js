@@ -158,9 +158,30 @@ class App {
     }
 
     /**
-     * Save vision (special case for VISION_kind)
+     * Toggle edit mode for a textarea
      */
-    async saveVision(btn) {
+    toggleEdit(btn) {
+        const container = btn.closest('.saveable-textarea');
+        const textarea = container.querySelector('.saveable-input');
+        const status = container.querySelector('.save-status');
+        
+        if (textarea.hasAttribute('readonly')) {
+            // Enable editing
+            textarea.removeAttribute('readonly');
+            textarea.focus();
+            btn.textContent = '[ Save ]';
+            status.textContent = 'Unsaved';
+            status.style.color = 'var(--warning)';
+        } else {
+            // Save and lock
+            this.saveVisionFromEdit(btn);
+        }
+    }
+
+    /**
+     * Save vision from edit mode
+     */
+    async saveVisionFromEdit(btn) {
         const container = btn.closest('.saveable-textarea');
         const textarea = container.querySelector('.saveable-input');
         const status = container.querySelector('.save-status');
@@ -195,10 +216,11 @@ class App {
                 }
             }
             
-            // Show saved
-            btn.textContent = '[ Saved ]';
-            btn.classList.add('btn-saved');
-            btn.disabled = true;
+            // Lock editing, show saved
+            textarea.setAttribute('readonly', true);
+            btn.textContent = '[ Edit ]';
+            status.textContent = 'Saved';
+            status.style.color = 'var(--accent)';
             
         } catch (err) {
             console.error('Save failed:', err);
