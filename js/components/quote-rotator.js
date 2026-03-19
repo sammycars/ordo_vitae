@@ -45,7 +45,7 @@ class QuoteRotator {
 
     /**
      * Rotate to next quote with fade effect
-     * Timing: fade out (1s) + hidden (1s) + fade in (1s) + visible (7s) = 10s total
+     * Timing: fade out (1s) + hidden (3s) + fade in (1s) + visible (5s) = 10s total
      */
     rotateQuote() {
         if (!this.quoteElement || this.isRotating) return;
@@ -58,7 +58,7 @@ class QuoteRotator {
         // Fade out
         this.quoteElement.classList.add('fade-out');
 
-        // After fade out (1s) + hidden (1s) = 2s total, change quote and fade in
+        // After fade out (1s) + hidden (3s) = 4s total, change quote and fade in
         setTimeout(() => {
             // Change quote
             this.quoteElement.textContent = `"${quote.text}"`;
@@ -71,7 +71,7 @@ class QuoteRotator {
             setTimeout(() => {
                 this.isRotating = false;
             }, 1000);
-        }, 2000); // 2s = 1s fade out + 1s hidden
+        }, 4000); // 4s = 1s fade out + 3s hidden
     }
 
     /**
