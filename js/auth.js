@@ -180,6 +180,11 @@ class Auth {
     showLogin() {
         this.loginView.classList.remove('hidden');
         this.dashboardView.classList.add('hidden');
+        
+        // Stop quote rotator when logged out
+        if (window.ordoApp?.quoteRotator) {
+            window.ordoApp.quoteRotator.stop();
+        }
     }
 
     /**

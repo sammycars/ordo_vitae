@@ -19,6 +19,9 @@ class App {
         
         // View instances
         this.views = {};
+        
+        // Quote rotator
+        this.quoteRotator = null;
     }
 
     /**
@@ -33,8 +36,20 @@ class App {
         // Set up theme
         this.setupTheme();
         
+        // Initialize quote rotator
+        await this.initQuotes();
+        
         // Load initial view
         await this.loadView('visions');
+    }
+
+    /**
+     * Initialize quotes
+     */
+    async initQuotes() {
+        this.quoteRotator = new window.QuoteRotator(this);
+        await this.quoteRotator.loadQuotes();
+        this.quoteRotator.start(8000); // Rotate every 8 seconds
     }
 
     /**
