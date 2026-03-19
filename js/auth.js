@@ -33,7 +33,6 @@ class Auth {
 
         // Listen for auth state changes
         this.supabase.onAuthChange((event, session) => {
-            console.log('Auth change:', event, session);
             if (session) {
                 this.currentUser = session.user;
                 this.showDashboard();
@@ -83,7 +82,6 @@ class Auth {
             // Manual check in case auth change doesn't fire
             setTimeout(async () => {
                 const user = await this.supabase.getUser();
-                console.log('Manual user check:', user);
                 if (user) {
                     this.currentUser = user;
                     this.showDashboard();
