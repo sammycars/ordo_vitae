@@ -178,6 +178,27 @@ body {
     color: var(--accent);
 }
 
+/* Dev link - distinctive styling */
+.dev-link {
+    color: var(--warning);
+}
+
+.dev-link:hover {
+    color: var(--accent);
+}
+
+/* Test items */
+.tests {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+}
+
+.test-item {
+    padding: var(--space-sm);
+    border-bottom: 1px solid var(--border);
+}
+
 .content {
     max-width: 1200px;
     margin: 0 auto;
