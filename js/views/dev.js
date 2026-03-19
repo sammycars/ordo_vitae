@@ -11,8 +11,16 @@ class DevView {
 
     render() {
         const colors = [
-            '#ff4444', '#ff8844', '#ffee44', '#44ff44', '#44eeff',
-            '#4444ff', '#ff44ff', '#ff4488', '#ffffff', '#00ff88'
+            { hex: '#ff4444', name: 'red' },
+            { hex: '#ff8844', name: 'orange' },
+            { hex: '#ffee44', name: 'yellow' },
+            { hex: '#44ff44', name: 'green' },
+            { hex: '#44eeff', name: 'cyan' },
+            { hex: '#4444ff', name: 'blue' },
+            { hex: '#ff44ff', name: 'magenta' },
+            { hex: '#ff4488', name: 'pink' },
+            { hex: '#ffffff', name: 'white' },
+            { hex: '#00ff88', name: 'mint' }
         ];
         
         const html = `
@@ -47,10 +55,10 @@ class DevView {
                     <div class="color-section" style="flex: 1; min-width: 300px;">
                         <strong>Colors:</strong>
                         <div class="color-preview" style="display: flex; flex-direction: column; gap: 4px; margin-top: var(--space-sm);">
-                            ${colors.map((color, i) => 
-                                `<div style="display: flex; justify-content: space-between; padding: 4px 8px; font-size: 14px; color: ${color};">
+                            ${colors.map((c, i) => 
+                                `<div style="display: flex; justify-content: space-between; padding: 4px 8px; font-size: 14px; color: ${c.hex};">
                                     <span>Confine yourself to the present.</span>
-                                    <span><span style="margin-right: 8px;">${color}</span><span style="font-weight: bold;">#${i + 1}</span></span>
+                                    <span><span style="margin-right: 8px;">${c.name}</span><span style="font-weight: bold;">#${i + 1}</span></span>
                                 </div>`
                             ).join('')}
                         </div>
