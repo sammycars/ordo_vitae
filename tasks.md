@@ -14,9 +14,9 @@
 
 ## Phase 2: Data Schema
 
-- [ ] **2.1** Design database schema following Section 5 principles (`USER_*`, `GOAL_*` naming)
-- [ ] **2.2** Create migrations for core tables (users, goals, tasks, etc.)
-- [ ] **2.3** Enable RLS (Row Level Security) on all tables
+- [x] **2.1** Design database schema following Section 5 principles (`USER_*`, `GOAL_*` naming)
+- [x] **2.2** Create migrations for core tables (users, goals, tasks, etc.)
+- [x] **2.3** Enable RLS (Row Level Security) on all tables
 - [ ] **2.4** Document schema in `docs/database.md` (meta documentation)
 
 ## Phase 3: Core UI
