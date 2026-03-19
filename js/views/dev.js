@@ -51,13 +51,13 @@ class DevView {
                         </div>
                         
                         <strong style="margin-top: var(--space-lg); display: block;">Buttons (style):</strong>
-                        <div style="display: flex; gap: var(--space-md); flex-wrap: wrap; margin-top: var(--space-sm);">
-                            <button class="btn">[ Primary ]</button>
-                            <button class="btn btn-secondary">[ Secondary ]</button>
-                            <button class="btn btn-danger">[ Danger ]</button>
-                            <button class="btn btn-sm">[ Small ]</button>
-                            <button class="btn btn-disabled" disabled>[ Disabled ]</button>
-                            <button class="btn btn-active">[ Active ]</button>
+                        <div style="display: flex; gap: var(--space-md); flex-wrap: wrap; margin-top: var(--space-sm); align-items: center;">
+                            <span style="color: #00ff88; font-size: 14px;">(mint)</span><button class="btn">[ Primary ]</button>
+                            <span style="color: #999; font-size: 14px;">(grey)</span><button class="btn btn-secondary">[ Secondary ]</button>
+                            <span style="color: #ff4444; font-size: 14px;">(red)</span><button class="btn btn-danger">[ Danger ]</button>
+                            <span style="color: #00ff88; font-size: 12px;">(mint)</span><button class="btn btn-sm">[ Small ]</button>
+                            <span style="color: #666; font-size: 14px;">(grey)</span><button class="btn btn-disabled" disabled>[ Disabled ]</button>
+                            <span style="color: #00ff88; font-size: 14px;">(mint)</span><button class="btn btn-active">[ Active ]</button>
                         </div>
                     </div>
                     
