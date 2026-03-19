@@ -139,8 +139,8 @@ body {
 /* Quote container */
 .quote-container {
     flex: 1;
-    min-width: 200px;
-    max-width: 500px;
+    min-width: 300px;
+    max-width: 650px;
     text-align: right;
     min-height: 1.5em;
     display: flex;
