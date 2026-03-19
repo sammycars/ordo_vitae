@@ -61,6 +61,7 @@ class Auth {
                 this.showLogin();
             }
         }, 500);
+    }
 
     /**
      * Handle login
