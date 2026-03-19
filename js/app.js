@@ -192,6 +192,9 @@ class App {
         const id = textarea.dataset.id;
         const value = textarea.value;
         
+        // Get current user
+        const user = this.currentUser;
+        
         btn.disabled = true;
         btn.textContent = '[ Saving... ]';
         
@@ -205,10 +208,11 @@ class App {
                     VISION_updated_at: new Date().toISOString()
                 }).eq('id', id);
             } else {
-                // Insert new
+                // Insert new with user_id
                 const { data, error } = await client.from(table).insert({
                     VISION_kind: kind,
-                    [field]: value
+                    [field]: value,
+                    user_id: user.id
                 });
                 
                 if (data && data[0]) {

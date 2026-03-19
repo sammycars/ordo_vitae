@@ -106,9 +106,12 @@ class VisionsView {
     async loadVisions() {
         try {
             const client = this.app.supabase.getClient();
+            const user = this.app.currentUser;
+            
             const { data, error } = await client
                 .from('ordovision')
-                .select('*');
+                .select('*')
+                .eq('user_id', user.id);
             
             if (error) throw error;
             return data || [];
