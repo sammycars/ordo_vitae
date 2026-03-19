@@ -39,8 +39,9 @@ class App {
         // Initialize quote rotator
         await this.initQuotes();
         
-        // Load initial view
-        await this.loadView('visions');
+        // Load initial view (saved or default to visions)
+        const savedView = localStorage.getItem('ordo-current-view') || 'visions';
+        await this.loadView(savedView);
     }
 
     /**
@@ -126,6 +127,9 @@ class App {
      */
     async loadView(viewName) {
         this.currentView = viewName;
+        
+        // Save current view
+        localStorage.setItem('ordo-current-view', viewName);
         
         // Update active nav link
         this.navLinks.forEach(link => {
