@@ -82,6 +82,9 @@ class App {
             case 'visions':
                 await this.renderVisions();
                 break;
+            case 'habits':
+                await this.renderHabits();
+                break;
             case 'goals':
                 await this.renderGoals();
                 break;
@@ -141,6 +144,24 @@ class App {
         
         this.content.innerHTML = html;
         this.setupTabs();
+    }
+
+    /**
+     * Render Habits view
+     * See: Phase 4.x - Habits tracking
+     */
+    async renderHabits() {
+        const html = `
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">Habits</span>
+                    <button class="btn">[ + Add ]</button>
+                </div>
+                <p class="placeholder">Your habits will appear here.</p>
+            </div>
+        `;
+        
+        this.content.innerHTML = html;
     }
 
     /**
