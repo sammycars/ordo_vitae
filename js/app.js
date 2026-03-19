@@ -3,6 +3,8 @@
  * 
  * Core application logic and view management.
  * See: /projects/websites/design-principles.md
+ * 
+ * Views are loaded from separate files in js/views/
  */
 
 class App {
@@ -14,6 +16,9 @@ class App {
         // DOM elements
         this.content = document.querySelector('.content');
         this.navLinks = document.querySelectorAll('.nav-link[data-view]');
+        
+        // View instances
+        this.views = {};
     }
 
     /**
@@ -66,6 +71,20 @@ class App {
     }
 
     /**
+     * Get or create a view instance
+     * @param {string} viewName 
+     */
+    getView(viewName) {
+        if (!this.views[viewName]) {
+            const className = viewName.charAt(0).toUpperCase() + viewName.slice(1) + 'View';
+            if (window[className]) {
+                this.views[viewName] = new window[className](this);
+            }
+        }
+        return this.views[viewName];
+    }
+
+    /**
      * Load a specific view
      * @param {string} viewName 
      */
@@ -77,203 +96,13 @@ class App {
             link.classList.toggle('active', link.dataset.view === viewName);
         });
 
-        // Load view content
-        switch (viewName) {
-            case 'visions':
-                await this.renderVisions();
-                break;
-            case 'goals':
-                await this.renderGoals();
-                break;
-            case 'actions':
-                await this.renderActions();
-                break;
-            case 'quarters':
-                await this.renderQuarters();
-                break;
-            case 'weeks':
-                await this.renderWeeks();
-                break;
-            case 'days':
-                await this.renderDays();
-                break;
-            case 'habits':
-                await this.renderHabits();
-                break;
-            default:
-                this.content.innerHTML = '<p>View not found.</p>';
+        // Get view instance and render
+        const view = this.getView(viewName);
+        if (view && view.render) {
+            view.render();
+        } else {
+            this.content.innerHTML = '<p>View not found.</p>';
         }
-    }
-
-    /**
-     * Render Visions view
-     */
-    async renderVisions() {
-        const html = `
-            <div class="tabs">
-                <div class="tab active" data-tab="3year">3-Year Vision</div>
-                <div class="tab" data-tab="fear">Fear Vision</div>
-                <div class="tab" data-tab="1year">1-Year Vision</div>
-            </div>
-            
-            <div class="tab-content active" id="tab-3year">
-                <div class="card">
-                    <div class="card-header">
-                        <span class="card-title">3-Year Vision</span>
-                        <button class="btn">[ Edit ]</button>
-                    </div>
-                    <p class="placeholder">Your 3-year vision will appear here.</p>
-                </div>
-            </div>
-            
-            <div class="tab-content" id="tab-fear">
-                <div class="card">
-                    <div class="card-header">
-                        <span class="card-title">Fear Vision</span>
-                        <button class="btn">[ Edit ]</button>
-                    </div>
-                    <p class="placeholder">Your fear vision will appear here.</p>
-                </div>
-            </div>
-            
-            <div class="tab-content" id="tab-1year">
-                <div class="card">
-                    <div class="card-header">
-                        <span class="card-title">1-Year Vision</span>
-                        <button class="btn">[ Edit ]</button>
-                    </div>
-                    <p class="placeholder">Your 1-year vision will appear here.</p>
-                </div>
-            </div>
-        `;
-        
-        this.content.innerHTML = html;
-        this.setupTabs();
-    }
-
-    /**
-     * Render Goals view
-     */
-    async renderGoals() {
-        const html = `
-            <div class="card">
-                <div class="card-header">
-                    <span class="card-title">Goals</span>
-                    <button class="btn">[ + Add ]</button>
-                </div>
-                <p class="placeholder">Your goals will appear here.</p>
-            </div>
-        `;
-        
-        this.content.innerHTML = html;
-    }
-
-    /**
-     * Render Actions view
-     */
-    async renderActions() {
-        const html = `
-            <div class="card">
-                <div class="card-header">
-                    <span class="card-title">Actions</span>
-                    <button class="btn">[ + Add ]</button>
-                </div>
-                <p class="placeholder">Your actions will appear here.</p>
-            </div>
-        `;
-        
-        this.content.innerHTML = html;
-    }
-
-    /**
-     * Render Quarters view
-     */
-    async renderQuarters() {
-        const html = `
-            <div class="card">
-                <div class="card-header">
-                    <span class="card-title">Quarters</span>
-                    <button class="btn">[ + Add ]</button>
-                </div>
-                <p class="placeholder">Your quarterly plan will appear here.</p>
-            </div>
-        `;
-        
-        this.content.innerHTML = html;
-    }
-
-    /**
-     * Render Weeks view
-     */
-    async renderWeeks() {
-        const html = `
-            <div class="card">
-                <div class="card-header">
-                    <span class="card-title">Weeks</span>
-                    <button class="btn">[ + Add ]</button>
-                </div>
-                <p class="placeholder">Your weekly plan will appear here.</p>
-            </div>
-        `;
-        
-        this.content.innerHTML = html;
-    }
-
-    /**
-     * Render Days view
-     */
-    async renderDays() {
-        const html = `
-            <div class="card">
-                <div class="card-header">
-                    <span class="card-title">Days</span>
-                    <button class="btn">[ + Add ]</button>
-                </div>
-                <p class="placeholder">Your daily plan will appear here.</p>
-            </div>
-        `;
-        
-        this.content.innerHTML = html;
-    }
-
-    /**
-     * Render Habits view
-     */
-    async renderHabits() {
-        const html = `
-            <div class="card">
-                <div class="card-header">
-                    <span class="card-title">Habits</span>
-                    <button class="btn">[ + Add ]</button>
-                </div>
-                <p class="placeholder">Your habits will appear here.</p>
-            </div>
-        `;
-        
-        this.content.innerHTML = html;
-    }
-
-    /**
-     * Set up tab switching
-     */
-    setupTabs() {
-        const tabs = document.querySelectorAll('.tab');
-        const contents = document.querySelectorAll('.tab-content');
-        
-        tabs.forEach(tab => {
-            tab.addEventListener('click', () => {
-                const tabId = tab.dataset.tab;
-                
-                // Update active tab
-                tabs.forEach(t => t.classList.remove('active'));
-                tab.classList.add('active');
-                
-                // Show corresponding content
-                contents.forEach(c => {
-                    c.classList.toggle('active', c.id === `tab-${tabId}`);
-                });
-            });
-        });
     }
 }
 
