@@ -267,6 +267,7 @@ input::placeholder {
     margin-bottom: var(--space-md);
     border: 1px solid var(--border);
     font-size: var(--font-size-sm);
+    white-space: pre-line;
 }
 
 .message-error {

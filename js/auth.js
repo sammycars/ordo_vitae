@@ -111,7 +111,7 @@ class Auth {
             
             if (error) throw error;
             
-            this.showMessage('Check your email to confirm your account! (Look for noreply@mail.app.supabase.io)', 'success');
+            this.showMessage('Check your email to confirm your account!\n(Look for noreply@mail.app.supabase.io)', 'success');
             
         } catch (err) {
             this.showMessage('Signup failed: ' + err.message, 'error');
