@@ -74,11 +74,9 @@ class App {
         const savedTheme = localStorage.getItem('ordo-theme') || 'dark';
         document.documentElement.setAttribute('data-theme', savedTheme);
         
-        // Load saved font size
-        const savedSize = localStorage.getItem('ordo-font-size');
-        if (savedSize) {
-            document.documentElement.style.setProperty('--font-size-base', savedSize + 'px');
-        }
+        // Default font size 14px (option #4)
+        const savedSize = localStorage.getItem('ordo-font-size') || '14';
+        document.documentElement.style.setProperty('--font-size-base', savedSize + 'px');
     }
 
     /**
