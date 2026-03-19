@@ -11,10 +11,8 @@ class DevView {
 
     render() {
         const colors = [
-            '#ff4444', '#ff8844', '#ffcc44', '#ffee44', '#ccff44', '#88ff44', '#44ff44', '#44ff88',
-            '#44ffcc', '#44eeff', '#4488ff', '#4444ff', '#8844ff', '#cc44ff', '#ff44ff', '#ff44cc',
-            '#ff4488', '#ffffff', '#e0e0e0', '#999999', '#666666', '#333333', '#000000', '#00ff88',
-            '#00ffcc', '#00ccff', '#0088ff', '#0044ff', '#4400ff', '#8800ff', '#cc00ff', '#ff0088'
+            '#ff4444', '#ff8844', '#ffee44', '#44ff44', '#44eeff',
+            '#4444ff', '#ff44ff', '#ff4488', '#ffffff', '#00ff88'
         ];
         
         const html = `
