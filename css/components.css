@@ -330,6 +330,32 @@
 .mt-md { margin-top: var(--space-md); }
 .mt-lg { margin-top: var(--space-lg); }
 
+/* ============================================
+   Diagnostics Status Bar
+   ============================================ */
+
+.diagnostics {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: var(--space-sm) var(--space-md);
+    background: var(--bg-primary);
+    border-top: 1px solid var(--border);
+    font-size: var(--font-size-sm);
+    display: flex;
+    gap: var(--space-md);
+    align-items: center;
+}
+
+.diag-label {
+    color: var(--text-muted);
+}
+
+.diag-item {
+    font-weight: 500;
+}
+
 .mb-sm { margin-bottom: var(--space-sm); }
 .mb-md { margin-bottom: var(--space-md); }
 .mb-lg { margin-bottom: var(--space-lg); }

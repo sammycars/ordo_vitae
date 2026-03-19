@@ -100,6 +100,12 @@ class App {
         const view = this.getView(viewName);
         if (view && view.render) {
             view.render();
+            
+            // Run diagnostics after view renders
+            setTimeout(() => {
+                const diag = new window.Diagnostics(this);
+                diag.run();
+            }, 100);
         } else {
             this.content.innerHTML = '<p>View not found.</p>';
         }
