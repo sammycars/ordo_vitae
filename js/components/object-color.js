@@ -24,8 +24,8 @@ class ObjectColor {
         // Complete = grey
         if (obj.completion_status === 'complete') return '#666666';
         
-        // Rolled over = magenta
-        if (obj.rolled_over) return '#ff44ff';
+        // Rolled over = magenta (only TASK and TODO)
+        if (obj.rollover || obj.TASK_rollover || obj.TODO_rollover) return '#ff44ff';
         
         // Get scheduling properties
         const hasQuarter = obj.quarter_id || obj.GOAL_quarter_id;
@@ -75,7 +75,7 @@ class ObjectColor {
      */
     static getClass(obj) {
         if (obj.completion_status === 'complete') return 'status-complete';
-        if (obj.rolled_over) return 'status-rolled';
+        if (obj.rollover || obj.TASK_rollover || obj.TODO_rollover) return 'status-rolled';
         
         const hasQuarter = obj.quarter_id || obj.GOAL_quarter_id;
         const hasWeek = obj.week_id || obj.WEEK_id;
