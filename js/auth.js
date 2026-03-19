@@ -25,6 +25,9 @@ class Auth {
      * Initialize auth - check if user is already logged in
      */
     async init() {
+        // Initialize Supabase client first
+        await this.supabase.init();
+
         // Set up event listeners
         this.loginBtn.addEventListener('click', () => this.login());
         this.signupBtn.addEventListener('click', () => this.signup());
