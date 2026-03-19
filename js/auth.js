@@ -63,7 +63,7 @@ class Auth {
         const password = this.passwordInput.value;
 
         if (!email || !password) {
-            alert('Please enter email and password');
+            this.showMessage('Please enter email and password', 'error');
             return;
         }
 
@@ -79,7 +79,7 @@ class Auth {
             this.passwordInput.value = '';
             
         } catch (err) {
-            alert('Login failed: ' + err.message);
+            this.showMessage('Login failed: ' + err.message, 'error');
         } finally {
             this.setLoading(false);
         }
@@ -93,12 +93,12 @@ class Auth {
         const password = this.passwordInput.value;
 
         if (!email || !password) {
-            alert('Please enter email and password');
+            this.showMessage('Please enter email and password', 'error');
             return;
         }
 
         if (password.length < 6) {
-            alert('Password must be at least 6 characters');
+            this.showMessage('Password must be at least 6 characters', 'error');
             return;
         }
 
@@ -109,13 +109,29 @@ class Auth {
             
             if (error) throw error;
             
-            alert('Check your email to confirm your account!');
+            this.showMessage('Check your email to confirm your account!', 'success');
             
         } catch (err) {
-            alert('Signup failed: ' + err.message);
+            this.showMessage('Signup failed: ' + err.message, 'error');
         } finally {
             this.setLoading(false);
         }
+    }
+
+    /**
+     * Show inline message
+     */
+    showMessage(text, type = 'info') {
+        // Remove existing messages
+        const existing = this.loginView.querySelector('.message');
+        if (existing) existing.remove();
+
+        const msg = document.createElement('div');
+        msg.className = `message message-${type}`;
+        msg.textContent = text;
+        
+        const form = this.loginView.querySelector('.auth-form');
+        form.insertBefore(msg, form.firstChild);
     }
 
     /**

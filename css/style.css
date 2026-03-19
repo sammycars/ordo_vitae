@@ -233,6 +233,26 @@ input::placeholder {
 }
 
 /* ============================================
+   Messages (inline alerts - no popups)
+   ============================================ */
+.message {
+    padding: var(--space-sm) var(--space-md);
+    margin-bottom: var(--space-md);
+    border: 1px solid var(--border);
+    font-size: var(--font-size-sm);
+}
+
+.message-error {
+    border-color: var(--danger);
+    color: var(--danger);
+}
+
+.message-success {
+    border-color: var(--accent);
+    color: var(--accent);
+}
+
+/* ============================================
    Cards
    ============================================ */
 .card {
