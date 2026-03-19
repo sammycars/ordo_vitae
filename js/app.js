@@ -82,17 +82,23 @@ class App {
             case 'visions':
                 await this.renderVisions();
                 break;
-            case 'habits':
-                await this.renderHabits();
-                break;
             case 'goals':
                 await this.renderGoals();
                 break;
-            case 'weekly':
-                await this.renderWeekly();
+            case 'actions':
+                await this.renderActions();
                 break;
-            case 'daily':
-                await this.renderDaily();
+            case 'quarters':
+                await this.renderQuarters();
+                break;
+            case 'weeks':
+                await this.renderWeeks();
+                break;
+            case 'days':
+                await this.renderDays();
+                break;
+            case 'habits':
+                await this.renderHabits();
                 break;
             default:
                 this.content.innerHTML = '<p>View not found.</p>';
@@ -101,7 +107,6 @@ class App {
 
     /**
      * Render Visions view
-     * See: Phase 4.1 - Implement visions (3-Year, Fear, 1-Year)
      */
     async renderVisions() {
         const html = `
@@ -147,35 +152,16 @@ class App {
     }
 
     /**
-     * Render Habits view
-     * See: Phase 4.x - Habits tracking
-     */
-    async renderHabits() {
-        const html = `
-            <div class="card">
-                <div class="card-header">
-                    <span class="card-title">Habits</span>
-                    <button class="btn">[ + Add ]</button>
-                </div>
-                <p class="placeholder">Your habits will appear here.</p>
-            </div>
-        `;
-        
-        this.content.innerHTML = html;
-    }
-
-    /**
      * Render Goals view
-     * See: Phase 4.2 - Implement quarterly goals
      */
     async renderGoals() {
         const html = `
             <div class="card">
                 <div class="card-header">
-                    <span class="card-title">Quarterly Goals</span>
+                    <span class="card-title">Goals</span>
                     <button class="btn">[ + Add ]</button>
                 </div>
-                <p class="placeholder">Your quarterly goals will appear here.</p>
+                <p class="placeholder">Your goals will appear here.</p>
             </div>
         `;
         
@@ -183,14 +169,47 @@ class App {
     }
 
     /**
-     * Render Weekly view
-     * See: Phase 4.3 - Implement weekly planning
+     * Render Actions view
      */
-    async renderWeekly() {
+    async renderActions() {
         const html = `
             <div class="card">
                 <div class="card-header">
-                    <span class="card-title">Weekly Plan</span>
+                    <span class="card-title">Actions</span>
+                    <button class="btn">[ + Add ]</button>
+                </div>
+                <p class="placeholder">Your actions will appear here.</p>
+            </div>
+        `;
+        
+        this.content.innerHTML = html;
+    }
+
+    /**
+     * Render Quarters view
+     */
+    async renderQuarters() {
+        const html = `
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">Quarters</span>
+                    <button class="btn">[ + Add ]</button>
+                </div>
+                <p class="placeholder">Your quarterly plan will appear here.</p>
+            </div>
+        `;
+        
+        this.content.innerHTML = html;
+    }
+
+    /**
+     * Render Weeks view
+     */
+    async renderWeeks() {
+        const html = `
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">Weeks</span>
                     <button class="btn">[ + Add ]</button>
                 </div>
                 <p class="placeholder">Your weekly plan will appear here.</p>
@@ -201,17 +220,33 @@ class App {
     }
 
     /**
-     * Render Daily view
-     * See: Phase 4.4 - Implement daily planning
+     * Render Days view
      */
-    async renderDaily() {
+    async renderDays() {
         const html = `
             <div class="card">
                 <div class="card-header">
-                    <span class="card-title">Daily Plan</span>
+                    <span class="card-title">Days</span>
                     <button class="btn">[ + Add ]</button>
                 </div>
                 <p class="placeholder">Your daily plan will appear here.</p>
+            </div>
+        `;
+        
+        this.content.innerHTML = html;
+    }
+
+    /**
+     * Render Habits view
+     */
+    async renderHabits() {
+        const html = `
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">Habits</span>
+                    <button class="btn">[ + Add ]</button>
+                </div>
+                <p class="placeholder">Your habits will appear here.</p>
             </div>
         `;
         
