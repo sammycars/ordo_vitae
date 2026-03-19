@@ -1,0 +1,329 @@
+/* Ordo_Vitae - Design System
+ * Following principles from /projects/websites/design-principles.md
+ * Font: JetBrains Mono, minimalist, text-based buttons
+ */
+
+/* ============================================
+   CSS Variables (Theming)
+   ============================================ */
+:root {
+    /* Colors - Dark theme (default) */
+    --bg-primary: #0d0d0d;
+    --bg-secondary: #1a1a1a;
+    --bg-tertiary: #262626;
+    --text-primary: #e0e0e0;
+    --text-secondary: #999;
+    --text-muted: #666;
+    --accent: #00ff88;
+    --accent-hover: #00cc6a;
+    --danger: #ff4444;
+    --warning: #ffaa00;
+    --border: #333;
+
+    /* Typography */
+    --font-family: 'JetBrains Mono', monospace;
+    --font-size-base: 14px;
+    --font-size-sm: 12px;
+    --font-size-lg: 18px;
+    --font-size-xl: 24px;
+    --line-height: 1.6;
+
+    /* Spacing */
+    --space-xs: 4px;
+    --space-sm: 8px;
+    --space-md: 16px;
+    --space-lg: 24px;
+    --space-xl: 32px;
+
+    /* Transitions */
+    --transition: 0.2s ease;
+}
+
+/* Light theme */
+[data-theme="light"] {
+    --bg-primary: #f5f5f5;
+    --bg-secondary: #fff;
+    --bg-tertiary: #e8e8e8;
+    --text-primary: #1a1a1a;
+    --text-secondary: #555;
+    --text-muted: #888;
+    --border: #ddd;
+}
+
+/* ============================================
+   Reset & Base
+   ============================================ */
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    font-size: var(--font-size-base);
+    line-height: var(--line-height);
+}
+
+body {
+    font-family: var(--font-family);
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    min-height: 100vh;
+}
+
+/* ============================================
+   Utilities
+   ============================================ */
+.hidden {
+    display: none !important;
+}
+
+/* ============================================
+   Layout
+   ============================================ */
+#app {
+    min-height: 100vh;
+}
+
+.view {
+    min-height: 100vh;
+    padding: var(--space-lg);
+}
+
+/* Login View */
+.login-container {
+    max-width: 400px;
+    margin: 100px auto;
+    text-align: center;
+}
+
+.login-container h1 {
+    font-size: var(--font-size-xl);
+    font-weight: 700;
+    margin-bottom: var(--space-xs);
+    color: var(--accent);
+}
+
+.tagline {
+    color: var(--text-secondary);
+    margin-bottom: var(--space-xl);
+}
+
+/* Dashboard View */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: var(--space-lg);
+    border-bottom: 1px solid var(--border);
+    margin-bottom: var(--space-lg);
+    flex-wrap: wrap;
+    gap: var(--space-md);
+}
+
+.header h1 {
+    font-size: var(--font-size-lg);
+    color: var(--accent);
+}
+
+.nav {
+    display: flex;
+    gap: var(--space-sm);
+    flex-wrap: wrap;
+}
+
+.nav-link {
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: color var(--transition);
+}
+
+.nav-link:hover {
+    color: var(--accent);
+}
+
+.content {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* ============================================
+   Forms
+   ============================================ */
+.form-group {
+    margin-bottom: var(--space-md);
+    text-align: left;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: var(--space-xs);
+    color: var(--text-secondary);
+    font-size: var(--font-size-sm);
+}
+
+input[type="email"],
+input[type="password"],
+input[type="text"],
+input[type="number"],
+textarea,
+select {
+    width: 100%;
+    padding: var(--space-sm) var(--space-md);
+    font-family: var(--font-family);
+    font-size: var(--font-size-base);
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border);
+    color: var(--text-primary);
+    transition: border-color var(--transition);
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+    outline: none;
+    border-color: var(--accent);
+}
+
+input::placeholder {
+    color: var(--text-muted);
+}
+
+/* ============================================
+   Buttons
+   ============================================ */
+.btn {
+    font-family: var(--font-family);
+    font-size: var(--font-size-base);
+    background: none;
+    border: none;
+    color: var(--accent);
+    cursor: pointer;
+    padding: var(--space-sm) var(--space-md);
+    transition: color var(--transition), opacity var(--transition);
+}
+
+.btn:hover {
+    color: var(--accent-hover);
+    opacity: 0.8;
+}
+
+.btn:disabled {
+    color: var(--text-muted);
+    cursor: not-allowed;
+}
+
+.btn-secondary {
+    color: var(--text-secondary);
+}
+
+.btn-secondary:hover {
+    color: var(--text-primary);
+}
+
+.btn-danger {
+    color: var(--danger);
+}
+
+.button-group {
+    display: flex;
+    gap: var(--space-md);
+    justify-content: center;
+    margin-top: var(--space-lg);
+}
+
+/* ============================================
+   Cards
+   ============================================ */
+.card {
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border);
+    padding: var(--space-md);
+    margin-bottom: var(--space-md);
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-sm);
+}
+
+.card-title {
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+/* ============================================
+   Tabs
+   ============================================ */
+.tabs {
+    display: flex;
+    gap: var(--space-xs);
+    margin-bottom: var(--space-lg);
+    flex-wrap: wrap;
+}
+
+.tab {
+    padding: var(--space-sm) var(--space-md);
+    color: var(--text-secondary);
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: color var(--transition), border-color var(--transition);
+}
+
+.tab:hover {
+    color: var(--text-primary);
+}
+
+.tab.active {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+/* ============================================
+   Grid (for daily planning)
+   ============================================ */
+.grid {
+    display: grid;
+    gap: var(--space-sm);
+}
+
+.grid-7 {
+    grid-template-columns: repeat(7, 1fr);
+}
+
+/* ============================================
+   Mobile Responsiveness
+   ============================================ */
+@media (max-width: 768px) {
+    .header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .nav {
+        width: 100%;
+        justify-content: flex-start;
+    }
+
+    .grid-7 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .button-group {
+        flex-direction: column;
+    }
+
+    .btn {
+        width: 100%;
+    }
+}

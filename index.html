@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ordo_Vitae</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div id="app">
+        <!-- Login View -->
+        <div id="login-view" class="view">
+            <div class="login-container">
+                <h1>Ordo_Vitae</h1>
+                <p class="tagline">Order your life.</p>
+                <div class="auth-form">
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" placeholder="your@email.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" placeholder="Password">
+                    </div>
+                    <div class="button-group">
+                        <button id="login-btn" class="btn">[ Login ]</button>
+                        <button id="signup-btn" class="btn btn-secondary">[ Sign Up ]</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard View (hidden until logged in) -->
+        <div id="dashboard-view" class="view hidden">
+            <header class="header">
+                <h1>Ordo_Vitae</h1>
+                <nav class="nav">
+                    <a href="#" data-view="visions" class="nav-link">[ Visions ]</a>
+                    <a href="#" data-view="goals" class="nav-link">[ Goals ]</a>
+                    <a href="#" data-view="weekly" class="nav-link">[ Weekly ]</a>
+                    <a href="#" data-view="daily" class="nav-link">[ Daily ]</a>
+                    <a href="#" id="logout-btn" class="nav-link">[ Logout ]</a>
+                </nav>
+            </header>
+            <main class="content">
+                <!-- Content loaded dynamically -->
+            </main>
+        </div>
+    </div>
+
+    <script src="js/config.js"></script>
+    <script src="js/supabase-client.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
