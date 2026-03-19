@@ -10,6 +10,13 @@ class DevView {
     }
 
     render() {
+        const colors = [
+            '#ff4444', '#ff8844', '#ffcc44', '#ffee44', '#ccff44', '#88ff44', '#44ff44', '#44ff88',
+            '#44ffcc', '#44eeff', '#4488ff', '#4444ff', '#8844ff', '#cc44ff', '#ff44ff', '#ff44cc',
+            '#ff4488', '#ffffff', '#e0e0e0', '#999999', '#666666', '#333333', '#000000', '#00ff88',
+            '#00ffcc', '#00ccff', '#0088ff', '#0044ff', '#4400ff', '#8800ff', '#cc00ff', '#ff0088'
+        ];
+        
         const html = `
             <div class="card">
                 <div class="card-header">
@@ -19,19 +26,38 @@ class DevView {
                     This is for development viewing and testing purposes only.
                 </p>
                 
-                <div class="font-size-controls" style="margin-bottom: var(--space-lg);">
-                    <strong>Font Size:</strong>
-                    <div class="font-size-preview" style="display: flex; flex-direction: column; gap: var(--space-sm); margin-top: var(--space-sm);">
-                        ${[8, 10, 12, 14, 16, 18].map((size, i) => 
-                            `<div style="font-size: ${size}px;">
-                                <span style="color: var(--text-muted); margin-right: var(--space-sm);">#${i + 1}</span>
-                                <span>Confine yourself to the present.</span>
-                            </div>`
-                        ).join('')}
-                    </div>
+                <!-- Top row: Status info -->
+                <div class="dev-status-row" style="display: flex; gap: var(--space-lg); flex-wrap: wrap; margin-bottom: var(--space-lg);">
+                    <div id="dev-content"></div>
                 </div>
                 
-                <div id="dev-content"></div>
+                <div class="dev-main" style="display: flex; gap: var(--space-xl); flex-wrap: wrap;">
+                    <!-- Left: Font sizes -->
+                    <div class="font-size-section" style="flex: 1; min-width: 300px;">
+                        <strong>Font Size:</strong>
+                        <div class="font-size-preview" style="display: flex; flex-direction: column; gap: var(--space-sm); margin-top: var(--space-sm);">
+                            ${[8, 10, 12, 14, 16, 18].map((size, i) => 
+                                `<div style="font-size: ${size}px;">
+                                    <span style="color: var(--text-muted); margin-right: var(--space-sm);">#${i + 1}</span>
+                                    <span>Confine yourself to the present.</span>
+                                </div>`
+                            ).join('')}
+                        </div>
+                    </div>
+                    
+                    <!-- Right: Colors -->
+                    <div class="color-section" style="flex: 1; min-width: 300px;">
+                        <strong>Colors:</strong>
+                        <div class="color-preview" style="display: flex; flex-direction: column; gap: 2px; margin-top: var(--space-sm);">
+                            ${colors.map((color, i) => 
+                                `<div style="display: flex; justify-content: space-between; background: ${color}; padding: 4px 8px; font-size: 14px;">
+                                    <span>Confine yourself to the present.</span>
+                                    <span style="font-weight: bold;">#${i + 1}</span>
+                                </div>`
+                            ).join('')}
+                        </div>
+                    </div>
+                </div>
             </div>
         `;
         
@@ -48,7 +74,7 @@ class DevView {
         const container = document.getElementById('dev-content');
         if (!container) return;
 
-        let html = '<div class="tests">';
+        let html = '<div class="tests" style="display: flex; gap: var(--space-lg); flex-wrap: wrap;">';
         
         // Test 1: Config
         html += '<div class="test-item">';
@@ -71,7 +97,7 @@ class DevView {
         try {
             const user = await this.app.supabase.getUser();
             if (user) {
-                html += `<span style="color: var(--accent)">✓ Logged in as ${user.email}</span>`;
+                html += `<span style="color: var(--accent)">✓ ${user.email}</span>`;
             } else {
                 html += '<span style="color: var(--warning)">○ Not logged in</span>';
             }
