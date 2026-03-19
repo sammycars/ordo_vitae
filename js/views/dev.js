@@ -52,7 +52,7 @@ class DevView {
                             ${colors.map((color, i) => 
                                 `<div style="display: flex; justify-content: space-between; padding: 4px 8px; font-size: 14px; color: ${color};">
                                     <span>Confine yourself to the present.</span>
-                                    <span style="font-weight: bold;">#${i + 1}</span>
+                                    <span><span style="margin-right: 8px;">${color}</span><span style="font-weight: bold;">#${i + 1}</span></span>
                                 </div>`
                             ).join('')}
                         </div>
