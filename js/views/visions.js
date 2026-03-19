@@ -21,9 +21,8 @@ class VisionsView {
                 <div class="card">
                     <div class="card-header">
                         <span class="card-title">3-Year Vision</span>
-                        <button class="btn">[ Edit ]</button>
                     </div>
-                    <p class="placeholder">Your 3-year vision will appear here.</p>
+                    <textarea class="input vision-input" placeholder="Write your 3-year vision..."></textarea>
                 </div>
             </div>
             
@@ -31,9 +30,8 @@ class VisionsView {
                 <div class="card">
                     <div class="card-header">
                         <span class="card-title">Fear Vision</span>
-                        <button class="btn">[ Edit ]</button>
                     </div>
-                    <p class="placeholder">Your fear vision will appear here.</p>
+                    <textarea class="input vision-input" placeholder="Write your fear vision..."></textarea>
                 </div>
             </div>
             
@@ -41,15 +39,30 @@ class VisionsView {
                 <div class="card">
                     <div class="card-header">
                         <span class="card-title">1-Year Vision</span>
-                        <button class="btn">[ Edit ]</button>
                     </div>
-                    <p class="placeholder">Your 1-year vision will appear here.</p>
+                    <textarea class="input vision-input" placeholder="Write your 1-year vision..."></textarea>
                 </div>
             </div>
         `;
         
         this.app.content.innerHTML = html;
         this.setupTabs();
+        this.setupAutoResize();
+    }
+
+    setupAutoResize() {
+        const textareas = document.querySelectorAll('.vision-input');
+        textareas.forEach(textarea => {
+            // Auto-resize on input
+            textarea.addEventListener('input', function() {
+                this.style.height = 'auto';
+                this.style.height = this.scrollHeight + 'px';
+            });
+            
+            // Initial resize
+            textarea.style.height = 'auto';
+            textarea.style.height = textarea.scrollHeight + 'px';
+        });
     }
 
     setupTabs() {

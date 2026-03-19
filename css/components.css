@@ -97,6 +97,15 @@
     border-color: var(--danger);
 }
 
+/* Vision input - auto-sizing textarea */
+.vision-input {
+    width: 100%;
+    min-height: 100px;
+    resize: none;
+    overflow: hidden;
+    line-height: 1.6;
+}
+
 /* Input group */
 .input-group {
     display: flex;
