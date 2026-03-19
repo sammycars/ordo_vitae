@@ -21,9 +21,12 @@ class DevView {
                 
                 <div class="font-size-controls" style="margin-bottom: var(--space-lg);">
                     <strong>Font Size:</strong>
-                    <div class="font-size-options" style="display: flex; gap: var(--space-sm); margin-top: var(--space-sm); flex-wrap: wrap;">
+                    <div class="font-size-preview" style="display: flex; flex-direction: column; gap: var(--space-sm); margin-top: var(--space-sm);">
                         ${[8, 10, 12, 14, 16, 18].map((size, i) => 
-                            `<button class="btn btn-sm font-size-btn" data-size="${size}" onclick="window.ordoApp.setFontSize(${size}, this)">[ ${size} ]</button>`
+                            `<div style="font-size: ${size}px;">
+                                <span style="color: var(--text-muted); margin-right: var(--space-sm);">#${i + 1}</span>
+                                <span>Confine yourself to the present.</span>
+                            </div>`
                         ).join('')}
                     </div>
                 </div>
