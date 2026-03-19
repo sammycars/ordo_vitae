@@ -80,7 +80,7 @@ class DevView {
         const container = document.getElementById('dev-content');
         if (!container) return;
 
-        let html = '<div class="tests" style="display: flex; gap: var(--space-lg); flex-wrap: wrap;">';
+        let html = '<div class="tests" style="display: flex; gap: var(--space-lg); flex-wrap: wrap; flex-direction: row;">';
         
         // Test 1: Config
         html += '<div class="test-item">';
