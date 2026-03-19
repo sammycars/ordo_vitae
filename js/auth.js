@@ -76,6 +76,9 @@ class Auth {
             
             if (error) throw error;
             
+            // Show success - will transition via onAuthChange
+            this.showMessage('Login successful! Loading...', 'success');
+            
             // Clear inputs
             this.emailInput.value = '';
             this.passwordInput.value = '';
