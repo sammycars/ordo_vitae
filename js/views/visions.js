@@ -55,13 +55,18 @@ class VisionsView {
         textareas.forEach(textarea => {
             // Auto-resize on input
             textarea.addEventListener('input', function() {
+                const start = this.selectionStart;
+                const end = this.selectionEnd;
                 this.style.height = 'auto';
                 this.style.height = this.scrollHeight + 'px';
+                this.setSelectionRange(start, end);
             });
             
-            // Initial resize
-            textarea.style.height = 'auto';
-            textarea.style.height = textarea.scrollHeight + 'px';
+            // Initial resize (skip for already focused)
+            if (document.activeElement !== textarea) {
+                textarea.style.height = 'auto';
+                textarea.style.height = textarea.scrollHeight + 'px';
+            }
         });
     }
 

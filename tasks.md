@@ -21,10 +21,10 @@
 
 ## Phase 3: Core UI
 
-- [ ] **3.1** Build login page (Supabase Auth)
-- [ ] **3.2** Build main dashboard layout (navigation, header, content area)
-- [ ] **3.3** Implement dark mode / theming with CSS variables
-- [ ] **3.4** Create reusable components (buttons, cards, inputs) per design principles
+- [x] **3.1** Build login page (Supabase Auth)
+- [x] **3.2** Build main dashboard layout (navigation, header, content area)
+- [x] **3.3** Implement dark mode / theming with CSS variables
+- [x] **3.4** Create reusable components (buttons, cards, inputs) per design principles
 
 ## Phase 4: Features
 
