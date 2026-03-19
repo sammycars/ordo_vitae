@@ -142,6 +142,10 @@ body {
     min-width: 200px;
     max-width: 500px;
     text-align: right;
+    min-height: 1.5em;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
 }
 
 .quote-text {

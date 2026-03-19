@@ -49,7 +49,7 @@ class App {
     async initQuotes() {
         this.quoteRotator = new window.QuoteRotator(this);
         await this.quoteRotator.loadQuotes();
-        this.quoteRotator.start(8000); // Rotate every 8 seconds
+        this.quoteRotator.start(10000); // Rotate every 10 seconds
     }
 
     /**
