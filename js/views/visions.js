@@ -20,8 +20,10 @@ class VisionsView {
     }
 
     async render() {
+        console.log('[Visions.render] starting, currentUser:', this.app.currentUser?.id);
         // Load existing visions from Supabase
         const visions = await this.loadVisions();
+        console.log('[Visions.render] visions loaded:', visions.length);
         
         const threeYear = visions.find(v => v.vision_kind === SCHEMA.VISION.kind.three_year);
         const fear = visions.find(v => v.vision_kind === SCHEMA.VISION.kind.fear);
