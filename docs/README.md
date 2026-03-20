@@ -46,6 +46,17 @@ ordo_vitae/
 4. Views use `supabase-client.js` to talk to the database
 5. All data lives in Supabase (no localStorage for core data)
 
+## Infrastructure
+
+### Supabase
+- Project: `abhhlkhclbfzsisaezyv.supabase.co`
+- Service Role Key: stored in `johnbot/memory/supabase-keys.md` (not git-tracked)
+- Anon Key: in `js/config.js` (safe to expose)
+
+### Deployment
+- VPS: `centari` (Contabo)
+- Static files served from VPS at port 45682
+
 ## Design System
 
 See: `/projects/websites/design-principles.md`

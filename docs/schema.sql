@@ -1,139 +1,139 @@
 -- Ordo_Vitae — Supabase Schema
 -- Phase 2: Data Schema
--- Naming convention: OBJECT_property
+-- Naming convention: object_prefix_column_name (confirmed against actual Supabase)
 
 -- ==========================================
 -- VISION
 -- ==========================================
 CREATE TABLE IF NOT EXISTS ordovision (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    vision_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
     vision_kind TEXT NOT NULL CHECK (vision_kind IN ('three_year', 'fear', 'one_year')),
     vision_content TEXT,
-    created_at TIMESTAMPTZ DEFAULT now(),
-    updated_at TIMESTAMPTZ DEFAULT now()
+    vision_created_at TIMESTAMPTZ DEFAULT now(),
+    vision_updated_at TIMESTAMPTZ DEFAULT now()
 );
 
 -- ==========================================
 -- QUARTER
 -- ==========================================
 CREATE TABLE IF NOT EXISTS ordoquarter (
-    QUARTER_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    quarter_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
-    QUARTER_year INTEGER NOT NULL,
-    QUARTER_quarter INTEGER NOT NULL CHECK (QUARTER_quarter BETWEEN 1 AND 4),
-    QUARTER_start_date DATE NOT NULL,
-    QUARTER_end_date DATE NOT NULL,
-    QUARTER_created_at TIMESTAMPTZ DEFAULT now()
+    quarter_year INTEGER NOT NULL,
+    quarter INTEGER NOT NULL CHECK (quarter BETWEEN 1 AND 4),
+    quarter_start_date DATE NOT NULL,
+    quarter_end_date DATE NOT NULL,
+    quarter_created_at TIMESTAMPTZ DEFAULT now()
 );
 
 -- ==========================================
 -- WEEK
 -- ==========================================
 CREATE TABLE IF NOT EXISTS ordoweek (
-    WEEK_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    week_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
-    WEEK_quarter_id UUID REFERENCES ordoquarter(QUARTER_id) ON DELETE CASCADE,
-    WEEK_start_date DATE NOT NULL,
-    WEEK_end_date DATE NOT NULL,
-    WEEK_created_at TIMESTAMPTZ DEFAULT now()
+    week_quarter_id UUID REFERENCES ordoquarter(quarter_id) ON DELETE CASCADE,
+    week_start_date DATE NOT NULL,
+    week_end_date DATE NOT NULL,
+    week_created_at TIMESTAMPTZ DEFAULT now()
 );
 
 -- ==========================================
 -- DAY
 -- ==========================================
 CREATE TABLE IF NOT EXISTS ordoday (
-    DAY_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    day_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
-    DAY_week_id UUID REFERENCES ordoweek(WEEK_id) ON DELETE SET NULL,
-    DAY_date DATE UNIQUE NOT NULL,
-    DAY_created_at TIMESTAMPTZ DEFAULT now()
+    day_week_id UUID REFERENCES ordoweek(week_id) ON DELETE SET NULL,
+    day_date DATE UNIQUE NOT NULL,
+    day_created_at TIMESTAMPTZ DEFAULT now()
 );
 
 -- ==========================================
 -- GOAL
 -- ==========================================
 CREATE TABLE IF NOT EXISTS ordogoal (
-    GOAL_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    goal_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
-    GOAL_quarter_id UUID REFERENCES ordoquarter(QUARTER_id) ON DELETE SET NULL,
-    GOAL_realm TEXT,
-    GOAL_title TEXT NOT NULL,
-    GOAL_description TEXT,
-    GOAL_completion_status TEXT DEFAULT 'planned' CHECK (GOAL_completion_status IN ('planned', 'in_progress', 'complete')),
-    GOAL_created_at TIMESTAMPTZ DEFAULT now(),
-    GOAL_updated_at TIMESTAMPTZ DEFAULT now()
+    goal_quarter_id UUID REFERENCES ordoquarter(quarter_id) ON DELETE SET NULL,
+    realm TEXT,
+    title TEXT NOT NULL,
+    description TEXT,
+    completion_status TEXT DEFAULT 'planned' CHECK (completion_status IN ('planned', 'in_progress', 'complete')),
+    goal_created_at TIMESTAMPTZ DEFAULT now(),
+    goal_updated_at TIMESTAMPTZ DEFAULT now()
 );
 
 -- ==========================================
 -- ACTION
 -- ==========================================
 CREATE TABLE IF NOT EXISTS ordoaction (
-    ACTION_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    action_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
-    ACTION_goal_id UUID REFERENCES ordogoal(GOAL_id) ON DELETE CASCADE,
-    ACTION_title TEXT NOT NULL,
-    ACTION_completion_status TEXT DEFAULT 'pending' CHECK (ACTION_completion_status IN ('pending', 'complete')),
-    ACTION_created_at TIMESTAMPTZ DEFAULT now(),
-    ACTION_updated_at TIMESTAMPTZ DEFAULT now()
+    action_goal_id UUID REFERENCES ordogoal(goal_id) ON DELETE CASCADE,
+    title TEXT NOT NULL,
+    completion_status TEXT DEFAULT 'pending' CHECK (completion_status IN ('pending', 'complete')),
+    action_created_at TIMESTAMPTZ DEFAULT now(),
+    action_updated_at TIMESTAMPTZ DEFAULT now()
 );
 
 -- ==========================================
 -- TASK
 -- ==========================================
 CREATE TABLE IF NOT EXISTS ordotask (
-    TASK_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    task_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
-    TASK_action_id UUID REFERENCES ordoaction(ACTION_id) ON DELETE CASCADE,
-    TASK_title TEXT NOT NULL,
-    TASK_scheduled_date DATE,
-    TASK_scheduled_time TIME,
-    TASK_completion_status TEXT DEFAULT 'pending' CHECK (TASK_completion_status IN ('pending', 'complete')),
-    TASK_rollover BOOLEAN DEFAULT false,
-    TASK_created_at TIMESTAMPTZ DEFAULT now(),
-    TASK_updated_at TIMESTAMPTZ DEFAULT now()
+    task_action_id UUID REFERENCES ordoaction(action_id) ON DELETE CASCADE,
+    title TEXT NOT NULL,
+    scheduled_date DATE,
+    scheduled_time TIME,
+    completion_status TEXT DEFAULT 'pending' CHECK (completion_status IN ('pending', 'complete')),
+    rollover BOOLEAN DEFAULT false,
+    task_created_at TIMESTAMPTZ DEFAULT now(),
+    task_updated_at TIMESTAMPTZ DEFAULT now()
 );
 
 -- ==========================================
 -- TODO
 -- ==========================================
 CREATE TABLE IF NOT EXISTS ordotodo (
-    TODO_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    todo_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
-    TODO_title TEXT NOT NULL,
-    TODO_scheduled_date DATE,
-    TODO_scheduled_time TIME,
-    TODO_completion_status TEXT DEFAULT 'pending' CHECK (TODO_completion_status IN ('pending', 'complete')),
-    TODO_rollover BOOLEAN DEFAULT false,
-    TODO_created_at TIMESTAMPTZ DEFAULT now(),
-    TODO_updated_at TIMESTAMPTZ DEFAULT now()
+    title TEXT NOT NULL,
+    scheduled_date DATE,
+    scheduled_time TIME,
+    completion_status TEXT DEFAULT 'pending' CHECK (completion_status IN ('pending', 'complete')),
+    rollover BOOLEAN DEFAULT false,
+    todo_created_at TIMESTAMPTZ DEFAULT now(),
+    todo_updated_at TIMESTAMPTZ DEFAULT now()
 );
 
 -- ==========================================
 -- HABIT_FATHER
 -- ==========================================
 CREATE TABLE IF NOT EXISTS ordohabit_father (
-    HABIT_FATHER_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    habit_father_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
-    HABIT_FATHER_name TEXT NOT NULL,
-    HABIT_FATHER_target_days INTEGER DEFAULT 7,
-    HABIT_FATHER_is_paused BOOLEAN DEFAULT false,
-    HABIT_FATHER_paused_reason TEXT,
-    HABIT_FATHER_created_at TIMESTAMPTZ DEFAULT now(),
-    HABIT_FATHER_updated_at TIMESTAMPTZ DEFAULT now()
+    name TEXT NOT NULL,
+    target_days INTEGER DEFAULT 7,
+    is_paused BOOLEAN DEFAULT false,
+    paused_reason TEXT,
+    habit_father_created_at TIMESTAMPTZ DEFAULT now(),
+    habit_father_updated_at TIMESTAMPTZ DEFAULT now()
 );
 
 -- ==========================================
 -- HABIT_SON
 -- ==========================================
 CREATE TABLE IF NOT EXISTS ordohabit_son (
-    HABIT_SON_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    habit_son_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
-    HABIT_SON_habit_id UUID REFERENCES ordohabit_father(HABIT_FATHER_id) ON DELETE CASCADE,
-    HABIT_SON_date DATE NOT NULL,
-    HABIT_SON_completion_status TEXT DEFAULT 'pending' CHECK (HABIT_SON_completion_status IN ('pending', 'complete')),
-    HABIT_SON_created_at TIMESTAMPTZ DEFAULT now(),
-    UNIQUE(HABIT_SON_habit_id, HABIT_SON_date)
+    habit_son_habit_id UUID REFERENCES ordohabit_father(habit_father_id) ON DELETE CASCADE,
+    date DATE NOT NULL,
+    completion_status TEXT DEFAULT 'pending' CHECK (completion_status IN ('pending', 'complete')),
+    habit_son_created_at TIMESTAMPTZ DEFAULT now(),
+    UNIQUE(habit_son_habit_id, date)
 );
 
 -- ==========================================
@@ -143,21 +143,21 @@ CREATE INDEX IF NOT EXISTS idx_vision_user ON ordovision(user_id);
 CREATE INDEX IF NOT EXISTS idx_quarter_user ON ordoquarter(user_id);
 CREATE INDEX IF NOT EXISTS idx_week_user ON ordoweek(user_id);
 CREATE INDEX IF NOT EXISTS idx_day_user ON ordoday(user_id);
-CREATE INDEX IF NOT EXISTS idx_day_date ON ordoday(DAY_date);
+CREATE INDEX IF NOT EXISTS idx_day_date ON ordoday(day_date);
 CREATE INDEX IF NOT EXISTS idx_goal_user ON ordogoal(user_id);
-CREATE INDEX IF NOT EXISTS idx_goal_quarter ON ordogoal(GOAL_quarter_id);
+CREATE INDEX IF NOT EXISTS idx_goal_quarter ON ordogoal(goal_quarter_id);
 CREATE INDEX IF NOT EXISTS idx_action_user ON ordoaction(user_id);
-CREATE INDEX IF NOT EXISTS idx_action_goal ON ordoaction(ACTION_goal_id);
+CREATE INDEX IF NOT EXISTS idx_action_goal ON ordoaction(action_goal_id);
 CREATE INDEX IF NOT EXISTS idx_task_user ON ordotask(user_id);
-CREATE INDEX IF NOT EXISTS idx_task_date ON ordotask(TASK_scheduled_date);
+CREATE INDEX IF NOT EXISTS idx_task_date ON ordotask(scheduled_date);
 CREATE INDEX IF NOT EXISTS idx_todo_user ON ordotodo(user_id);
-CREATE INDEX IF NOT EXISTS idx_todo_date ON ordotodo(TODO_scheduled_date);
+CREATE INDEX IF NOT EXISTS idx_todo_date ON ordotodo(scheduled_date);
 CREATE INDEX IF NOT EXISTS idx_habit_user ON ordohabit_father(user_id);
-CREATE INDEX IF NOT EXISTS idx_habit_son_habit ON ordohabit_son(HABIT_SON_habit_id);
-CREATE INDEX IF NOT EXISTS idx_habit_son_date ON ordohabit_son(HABIT_SON_date);
+CREATE INDEX IF NOT EXISTS idx_habit_son_habit ON ordohabit_son(habit_son_habit_id);
+CREATE INDEX IF NOT EXISTS idx_habit_son_date ON ordohabit_son(date);
 
 -- ==========================================
--- RLS (Row Level Security) - Enable for all tables
+-- RLS (Row Level Security)
 -- ==========================================
 ALTER TABLE ordovision ENABLE ROW LEVEL SECURITY;
 ALTER TABLE ordoquarter ENABLE ROW LEVEL SECURITY;
@@ -170,7 +170,6 @@ ALTER TABLE ordotodo ENABLE ROW LEVEL SECURITY;
 ALTER TABLE ordohabit_father ENABLE ROW LEVEL SECURITY;
 ALTER TABLE ordohabit_son ENABLE ROW LEVEL SECURITY;
 
--- Create policies (users can only see their own data)
 CREATE POLICY "Users can view own vision" ON ordovision FOR SELECT USING (auth.uid() = user_id);
 CREATE POLICY "Users can insert own vision" ON ordovision FOR INSERT WITH CHECK (auth.uid() = user_id);
 CREATE POLICY "Users can update own vision" ON ordovision FOR UPDATE USING (auth.uid() = user_id);
