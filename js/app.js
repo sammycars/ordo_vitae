@@ -218,8 +218,17 @@ class App {
 
         // Get view instance and render
         const view = this.getView(viewName);
+        console.log('[App] loadView:', viewName, view ? 'found' : 'NOT FOUND', view && view.render ? 'has render' : 'no render');
         if (view && view.render) {
-            view.render();
+            try {
+                const result = view.render();
+                if (result && typeof result.then === 'function') {
+                    await result;
+                }
+                console.log('[App] render complete for:', viewName);
+            } catch (err) {
+                console.error('[App] render error:', err);
+            }
             
             // Run diagnostics after view renders
             setTimeout(() => {

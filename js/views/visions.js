@@ -155,11 +155,13 @@ class VisionsView {
         
         // Restore saved tab
         const savedTab = localStorage.getItem('ordo-vision-tab') || '3year';
+        console.log('[Visions] setupTabs, savedTab:', savedTab);
         this.activateTab(savedTab, tabs, contents);
         
         tabs.forEach(tab => {
             tab.addEventListener('click', () => {
                 const tabId = tab.dataset.tab;
+                console.log('[Visions] tab clicked:', tabId);
                 localStorage.setItem('ordo-vision-tab', tabId);
                 this.activateTab(tabId, tabs, contents);
             });
@@ -167,6 +169,7 @@ class VisionsView {
     }
 
     activateTab(tabId, tabs, contents) {
+        console.log('[Visions] activating tab:', tabId);
         tabs.forEach(t => t.classList.toggle('active', t.dataset.tab === tabId));
         contents.forEach(c => c.classList.toggle('active', c.id === `tab-${tabId}`));
     }
