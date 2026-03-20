@@ -10,6 +10,15 @@ class VisionsView {
         this.app = app;
     }
 
+    escapeHtml(str) {
+        if (!str) return '';
+        return String(str)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;');
+    }
+
     async render() {
         // Load existing visions from Supabase
         const visions = await this.loadVisions();
@@ -38,7 +47,7 @@ class VisionsView {
                             data-field="${SCHEMA.VISION.columns.vision_content}"
                             data-kind="${SCHEMA.VISION.kind.three_year}"
                             ${threeYear?.vision_content ? 'readonly' : ''}
-                        >${threeYear?.vision_content || ''}</textarea>
+                        >${this.escapeHtml(threeYear?.vision_content) || ''}</textarea>
                         <div class="saveable-buttons">
                             <button class="btn btn-action" onclick="window.ordoApp.toggleEdit(this)">${threeYear?.vision_content ? '[ Edit ]' : '[ New ]'}</button>
                             <span class="save-status">${threeYear?.vision_content ? 'Saved' : ''}</span>
@@ -60,7 +69,7 @@ class VisionsView {
                             data-field="${SCHEMA.VISION.columns.vision_content}"
                             data-kind="${SCHEMA.VISION.kind.fear}"
                             ${fear?.vision_content ? 'readonly' : ''}
-                        >${fear?.vision_content || ''}</textarea>
+                        >${this.escapeHtml(fear?.vision_content) || ''}</textarea>
                         <div class="saveable-buttons">
                             <button class="btn btn-action" onclick="window.ordoApp.toggleEdit(this)">${fear?.vision_content ? '[ Edit ]' : '[ New ]'}</button>
                             <span class="save-status">${fear?.vision_content ? 'Saved' : ''}</span>
@@ -82,7 +91,7 @@ class VisionsView {
                             data-field="${SCHEMA.VISION.columns.vision_content}"
                             data-kind="${SCHEMA.VISION.kind.one_year}"
                             ${oneYear?.vision_content ? 'readonly' : ''}
-                        >${oneYear?.vision_content || ''}</textarea>
+                        >${this.escapeHtml(oneYear?.vision_content) || ''}</textarea>
                         <div class="saveable-buttons">
                             <button class="btn btn-action" onclick="window.ordoApp.toggleEdit(this)">${oneYear?.vision_content ? '[ Edit ]' : '[ New ]'}</button>
                             <span class="save-status">${oneYear?.vision_content ? 'Saved' : ''}</span>
