@@ -1,7 +1,7 @@
 # Ordo_Vitae — Project Tasks
 
 > Phoenix rebuilt right. See `/projects/websites/design-principles.md` for the governing principles.
-> **Current Version:** v0.3
+> **Current Version:** v0.4
 
 ---
 
@@ -19,8 +19,9 @@
 - [x] **2.2** Create migrations for core tables (users, goals, tasks, etc.)
 - [x] **2.3** Enable RLS (Row Level Security) on all tables
 - [x] **2.4** Document schema in `docs/schema.md` and `docs/schema.sql`
-- [ ] **2.5** Declare all variables up front — no magic strings in code. Every column name is listed in a config/data layer (e.g. `data/schema-columns.js`) with a comment linking it back to `docs/schema.sql`.
+- [x] **2.5** Declare all variables up front — no magic strings in code. Every column name is listed in a config/data layer (e.g. `data/schema-columns.js`) with a comment linking it back to `docs/schema.sql`.
 - [ ] **2.6** Verify schema agreement — confirm `docs/schema.sql`, actual Supabase tables, and the code config layer are in exact agreement. **Andy's gate:** Andybot reviews and signs off before Phase 3 begins.
+- [ ] **2.7** Apply schema.sql DDL to Supabase — create all missing columns in actual Supabase so all tables match schema.sql in full. All three sources must then agree. Re-verify with Andy after applying.
 
 ## Phase 3: Core UI
 
