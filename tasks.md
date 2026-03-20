@@ -50,6 +50,7 @@
   - ☐ Schema verified against Supabase before build — no drift between `docs/schema.sql` and actual columns
 - [ ] **4.3** Implement Actions
   - ☐ Schema verified against Supabase before build — no drift between `docs/schema.sql` and actual columns
+  - ☐ App state file updated on each operation (`data/app-state.json`) — no browser/DevConsole needed for James to inspect state
 - [ ] **4.4** Implement Quarters
   - ☐ Schema verified against Supabase before build — no drift between `docs/schema.sql` and actual columns
 - [ ] **4.5** Implement Weeks

@@ -176,6 +176,23 @@ class VisionsView {
         this.app.debugPanel.log('view', `activating tab: ${tabId}`);
         tabs.forEach(t => t.classList.toggle('active', t.dataset.tab === tabId));
         contents.forEach(c => c.classList.toggle('active', c.id === `tab-${tabId}`));
+
+        // Force textarea auto-resize on newly visible textareas + add input listener
+        setTimeout(() => {
+            const activeContent = document.getElementById(`tab-${tabId}`);
+            if (activeContent) {
+                activeContent.querySelectorAll('.vision-input').forEach(ta => {
+                    this.autoResize(ta);
+                    ta.addEventListener('input', () => this.autoResize(ta));
+                });
+            }
+        }, 0);
+    }
+
+    autoResize(textarea) {
+        if (!textarea) return;
+        textarea.style.height = 'auto';
+        textarea.style.height = textarea.scrollHeight + 'px';
     }
 }
 
