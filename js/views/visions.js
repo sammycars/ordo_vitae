@@ -37,12 +37,11 @@ class VisionsView {
                             data-table="ordovision"
                             data-field="vision_content"
                             data-kind="three_year"
-                            data-id="${threeYear?.id || ''}"
-                            ${threeYear?.id ? 'readonly' : ''}
+                            ${threeYear?.vision_content ? 'readonly' : ''}
                         >${threeYear?.vision_content || ''}</textarea>
                         <div class="saveable-buttons">
-                            <button class="btn btn-action" onclick="window.ordoApp.toggleEdit(this)">${threeYear?.id ? '[ Edit ]' : '[ New ]'}</button>
-                            <span class="save-status">${threeYear?.id ? 'Saved' : ''}</span>
+                            <button class="btn btn-action" onclick="window.ordoApp.toggleEdit(this)">${threeYear?.vision_content ? '[ Edit ]' : '[ New ]'}</button>
+                            <span class="save-status">${threeYear?.vision_content ? 'Saved' : ''}</span>
                         </div>
                     </div>
                 </div>
@@ -60,12 +59,11 @@ class VisionsView {
                             data-table="ordovision"
                             data-field="vision_content"
                             data-kind="fear"
-                            data-id="${fear?.id || ''}"
-                            ${fear?.id ? 'readonly' : ''}
+                            ${fear?.vision_content ? 'readonly' : ''}
                         >${fear?.vision_content || ''}</textarea>
                         <div class="saveable-buttons">
-                            <button class="btn btn-action" onclick="window.ordoApp.toggleEdit(this)">${fear?.id ? '[ Edit ]' : '[ New ]'}</button>
-                            <span class="save-status">${fear?.id ? 'Saved' : ''}</span>
+                            <button class="btn btn-action" onclick="window.ordoApp.toggleEdit(this)">${fear?.vision_content ? '[ Edit ]' : '[ New ]'}</button>
+                            <span class="save-status">${fear?.vision_content ? 'Saved' : ''}</span>
                         </div>
                     </div>
                 </div>
@@ -83,12 +81,11 @@ class VisionsView {
                             data-table="ordovision"
                             data-field="vision_content"
                             data-kind="one_year"
-                            data-id="${oneYear?.id || ''}"
-                            ${oneYear?.id ? 'readonly' : ''}
+                            ${oneYear?.vision_content ? 'readonly' : ''}
                         >${oneYear?.vision_content || ''}</textarea>
                         <div class="saveable-buttons">
-                            <button class="btn btn-action" onclick="window.ordoApp.toggleEdit(this)">${oneYear?.id ? '[ Edit ]' : '[ New ]'}</button>
-                            <span class="save-status">${oneYear?.id ? 'Saved' : ''}</span>
+                            <button class="btn btn-action" onclick="window.ordoApp.toggleEdit(this)">${oneYear?.vision_content ? '[ Edit ]' : '[ New ]'}</button>
+                            <span class="save-status">${oneYear?.vision_content ? 'Saved' : ''}</span>
                         </div>
                     </div>
                 </div>

@@ -139,7 +139,6 @@ class App {
         const table = textarea.dataset.table;
         const field = textarea.dataset.field;
         const kind = textarea.dataset.kind;
-        const id = textarea.dataset.id;
         const value = textarea.value;
         
         // Get current user
@@ -151,23 +150,27 @@ class App {
         try {
             const client = this.supabase.getClient();
             
-            if (id) {
+            // Try update first (by user_id + vision_kind), insert if no rows affected
+            // Note: select vision_content (known column) not id (unknown PK column name)
+            const { data: existing } = await client.from(table)
+                .select('vision_content')
+                .eq('user_id', user.id)
+                .eq('vision_kind', kind)
+                .maybeSingle();
+            
+            if (existing) {
                 // Update existing
                 await client.from(table).update({ 
                     [field]: value,
                     updated_at: new Date().toISOString()
-                }).eq('id', id);
+                }).eq('user_id', user.id).eq('vision_kind', kind);
             } else {
-                // Insert new with user_id
-                const { data, error } = await client.from(table).insert({
+                // Insert new
+                await client.from(table).insert({
                     vision_kind: kind,
                     [field]: value,
                     user_id: user.id
                 });
-                
-                if (data && data[0]) {
-                    textarea.dataset.id = data[0].id;
-                }
             }
             
             // Lock editing, show saved
