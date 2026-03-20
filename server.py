@@ -14,7 +14,7 @@ import socketserver
 import json
 import os
 import threading
-from datetime import datetime
+from datetime import datetime, timezone
 from urllib.parse import urlparse
 
 PORT = 45682
@@ -36,7 +36,7 @@ diagnostics = {
     "status": "ok",
     "server": "ordo_vitae",
     "uptime": None,
-    "started": datetime.utcnow().isoformat() + "Z"
+    "started": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
 }
 
 class LoggingHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
@@ -45,7 +45,7 @@ class LoggingHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
     
     def log_request(self, code=200, size=None):
         # Custom logging
-        ts = datetime.utcnow().isoformat() + "Z"
+        ts = datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
         path = self.path
         method = self.command
         client = self.client_address[0]
@@ -124,7 +124,7 @@ class LoggingHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
 if __name__ == "__main__":
     # Initialize log file
     with open(LOG_FILE, "a") as f:
-        f.write(f"# Ordo_Vitae server started at {datetime.utcnow().isoformat()}Z\n")
+        f.write(f"# Ordo_Vitae server started at {datetime.now(timezone.utc).isoformat()}Z\n")
     
     print(f"Starting Ordo_Vitae server on port {PORT}")
     print(f"Serving from: {DIRECTORY}")
