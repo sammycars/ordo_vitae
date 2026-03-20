@@ -8,7 +8,7 @@
 const CONFIG = {
     supabase: {
         url: 'https://abhhlkhclbfzsisaezyv.supabase.co',
-        anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFiaGhsa2hjbGJmenlpc2Flenl2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM3Nzk1MTMsImV4cCI6MjA4OTM1NTUxM30.OqPIHy-Tx5V8iWmPUXWPgsDIU3qN8Qg_emDoqOEJCGY'
+        anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFiaGhsa2hjbGJmenNpc2Flenl2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM3Nzk1MTMsImV4cCI6MjA4OTM1NTUxM30.OqPIHy-Tx5V8iWmPUXWPgsDIU3qN8Qg_emDoqOEJCGY'
     },
     app: {
         name: 'Ordo_Vitae',

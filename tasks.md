@@ -29,6 +29,7 @@
 - [x] **3.2** Build main dashboard layout (navigation, header, content area)
 - [x] **3.3** Implement dark mode / theming with CSS variables
 - [x] **3.4** Create reusable components (buttons, cards, inputs) per design principles
+- [x] **3.5** Retroactive schema gate — Andy verifies all Phase 3 items (3.1–3.4) against actual Supabase and config.js. ✅ PASSED 2026-03-20
 
 ## Phase 4: Features
 
@@ -45,7 +46,7 @@
 
 - [x] **4.1** Implement visions (3-Year, Fear, 1-Year) with Save/Edit workflow
   - ☐ Schema verified against Supabase before build — no drift between `docs/schema.sql` and actual columns
-- [ ] **4.2** Implement Goals
+- [x] **4.2** Implement Goals
   - ☐ Schema verified against Supabase before build — no drift between `docs/schema.sql` and actual columns
 - [ ] **4.3** Implement Actions
   - ☐ Schema verified against Supabase before build — no drift between `docs/schema.sql` and actual columns
@@ -84,6 +85,7 @@
 ## Known Issues
 
 - Vision save/load has RLS issues — needs fix for user_id handling
+- supabase-client.js getById() uses bare 'id' column — could cause issues if called on custom tables (none currently do); low-priority cleanup
 - Need to continue implementing remaining features
 
 ## Next Steps (when resuming)
