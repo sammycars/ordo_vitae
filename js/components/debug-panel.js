@@ -51,11 +51,17 @@ class DebugPanel {
             logs: this.logs.slice(-10)
         };
 
-        // Write to global state object agents can read via file
+        // Write to global state object
         window.ORDO_DEBUG_STATE = state;
 
-        // Also try to write to a fetchable URL (for agents with local access)
-        // This is advisory — main value is the window object
+        // POST state to server so agents can read it via /api/state.json
+        fetch('/api/state', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(state)
+        }).catch(() => {
+            // Silently fail — server may not be running
+        });
     }
 
     /**
