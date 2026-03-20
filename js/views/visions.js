@@ -24,6 +24,14 @@ class VisionsView {
         // Load existing visions from Supabase
         const visions = await this.loadVisions();
         console.log('[Visions.render] visions loaded:', visions.length);
+
+        // Debug: show in page
+        const savedTab = localStorage.getItem('ordo-vision-tab') || '3year';
+        const debugDiv = document.createElement('div');
+        debugDiv.style = 'position:fixed;top:0;left:0;background:#111;color:#0f0;padding:4px;font-size:11px;z-index:9999;';
+        debugDiv.textContent = `DEBUG: render called, user=${this.app.currentUser?.id} visions=${visions.length} savedTab=${savedTab}`;
+        document.body.prepend(debugDiv);
+        setTimeout(() => debugDiv.remove(), 5000);
         
         const threeYear = visions.find(v => v.vision_kind === SCHEMA.VISION.kind.three_year);
         const fear = visions.find(v => v.vision_kind === SCHEMA.VISION.kind.fear);

@@ -42,6 +42,12 @@ class App {
         // Load initial view (saved or default to visions)
         const savedView = localStorage.getItem('ordo-current-view') || 'visions';
         console.log('[App.init] user:', user?.id, 'savedView:', savedView, 'visionTab:', localStorage.getItem('ordo-vision-tab'));
+        // Visible debug
+        const dbg = document.createElement('div');
+        dbg.style = 'position:fixed;top:0;left:0;background:#111;color:#0f0;padding:4px;font-size:11px;z-index:99999;font-family:monospace;';
+        dbg.textContent = `APP_INIT uid=${user?.id} view=${savedView} tab=${localStorage.getItem('ordo-vision-tab')}`;
+        document.body.prepend(dbg);
+        setTimeout(() => dbg.remove(), 8000);
         await this.loadView(savedView);
     }
 
