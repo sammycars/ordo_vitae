@@ -151,25 +151,24 @@ class App {
             const client = this.supabase.getClient();
             
             // Try update first (by user_id + vision_kind), insert if no rows affected
-            // Note: select vision_content (known column) not id (unknown PK column name)
             const { data: existing } = await client.from(table)
-                .select('vision_content')
-                .eq('user_id', user.id)
-                .eq('vision_kind', kind)
+                .select(SCHEMA.VISION.columns.vision_content)
+                .eq(SCHEMA.VISION.columns.user_id, user.id)
+                .eq(SCHEMA.VISION.columns.vision_kind, kind)
                 .maybeSingle();
             
             if (existing) {
                 // Update existing
                 await client.from(table).update({ 
                     [field]: value,
-                    updated_at: new Date().toISOString()
-                }).eq('user_id', user.id).eq('vision_kind', kind);
+                    [SCHEMA.VISION.columns.updated_at]: new Date().toISOString()
+                }).eq(SCHEMA.VISION.columns.user_id, user.id).eq(SCHEMA.VISION.columns.vision_kind, kind);
             } else {
                 // Insert new
                 await client.from(table).insert({
-                    vision_kind: kind,
+                    [SCHEMA.VISION.columns.vision_kind]: kind,
                     [field]: value,
-                    user_id: user.id
+                    [SCHEMA.VISION.columns.user_id]: user.id
                 });
             }
             

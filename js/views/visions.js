@@ -14,9 +14,9 @@ class VisionsView {
         // Load existing visions from Supabase
         const visions = await this.loadVisions();
         
-        const threeYear = visions.find(v => v.vision_kind === 'three_year');
-        const fear = visions.find(v => v.vision_kind === 'fear');
-        const oneYear = visions.find(v => v.vision_kind === 'one_year');
+        const threeYear = visions.find(v => v.vision_kind === SCHEMA.VISION.kind.three_year);
+        const fear = visions.find(v => v.vision_kind === SCHEMA.VISION.kind.fear);
+        const oneYear = visions.find(v => v.vision_kind === SCHEMA.VISION.kind.one_year);
 
         const html = `
             <div class="tabs">
@@ -34,9 +34,9 @@ class VisionsView {
                         <textarea 
                             class="input vision-input saveable-input" 
                             placeholder="Write your 3-year vision..."
-                            data-table="ordovision"
-                            data-field="vision_content"
-                            data-kind="three_year"
+                            data-table="${SCHEMA.VISION.table}"
+                            data-field="${SCHEMA.VISION.columns.vision_content}"
+                            data-kind="${SCHEMA.VISION.kind.three_year}"
                             ${threeYear?.vision_content ? 'readonly' : ''}
                         >${threeYear?.vision_content || ''}</textarea>
                         <div class="saveable-buttons">
@@ -56,9 +56,9 @@ class VisionsView {
                         <textarea 
                             class="input vision-input saveable-input" 
                             placeholder="Write your fear vision..."
-                            data-table="ordovision"
-                            data-field="vision_content"
-                            data-kind="fear"
+                            data-table="${SCHEMA.VISION.table}"
+                            data-field="${SCHEMA.VISION.columns.vision_content}"
+                            data-kind="${SCHEMA.VISION.kind.fear}"
                             ${fear?.vision_content ? 'readonly' : ''}
                         >${fear?.vision_content || ''}</textarea>
                         <div class="saveable-buttons">
@@ -78,9 +78,9 @@ class VisionsView {
                         <textarea 
                             class="input vision-input saveable-input" 
                             placeholder="Write your 1-year vision..."
-                            data-table="ordovision"
-                            data-field="vision_content"
-                            data-kind="one_year"
+                            data-table="${SCHEMA.VISION.table}"
+                            data-field="${SCHEMA.VISION.columns.vision_content}"
+                            data-kind="${SCHEMA.VISION.kind.one_year}"
                             ${oneYear?.vision_content ? 'readonly' : ''}
                         >${oneYear?.vision_content || ''}</textarea>
                         <div class="saveable-buttons">
@@ -110,7 +110,7 @@ class VisionsView {
             const { data, error } = await client
                 .from('ordovision')
                 .select('*')
-                .filter('user_id', 'eq', user.id);
+                .filter(SCHEMA.VISION.columns.user_id, 'eq', user.id);
             
             if (error) throw error;
             return data || [];

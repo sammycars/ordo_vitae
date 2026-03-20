@@ -27,3 +27,32 @@ const CONFIG = {
 
 // Export for use in other modules
 window.ORDO_CONFIG = CONFIG;
+
+/**
+ * Schema — All table and column names declared in one place.
+ * See: /projects/websites/design-principles.md Section 5 (Data Layer)
+ * See: docs/schema.sql — source of truth for actual Supabase columns
+ * 
+ * Every column used in code must be listed here. No magic strings allowed.
+ * Before adding a column: verify it exists in Supabase AND document it in schema.sql
+ */
+const SCHEMA = {
+    // VISION table (ordovision)
+    // Schema: docs/schema.sql — ordovision
+    VISION: {
+        table: 'ordovision',
+        kind: {
+            three_year: 'three_year',
+            fear: 'fear',
+            one_year: 'one_year'
+        },
+        columns: {
+            id:          'id',          // Primary key (Supabase auto-exposes as 'id')
+            user_id:     'user_id',     // FK to auth.users
+            vision_kind: 'vision_kind', // three_year | fear | one_year
+            vision_content: 'vision_content', // The vision text
+            created_at:  'created_at',  // Auto-set by Supabase
+            updated_at:  'updated_at'   // Auto-set on update
+        }
+    }
+};

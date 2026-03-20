@@ -1,7 +1,7 @@
 # Ordo_Vitae — Project Tasks
 
 > Phoenix rebuilt right. See `/projects/websites/design-principles.md` for the governing principles.
-> **Current Version:** v0.2
+> **Current Version:** v0.3
 
 ---
 
@@ -19,6 +19,8 @@
 - [x] **2.2** Create migrations for core tables (users, goals, tasks, etc.)
 - [x] **2.3** Enable RLS (Row Level Security) on all tables
 - [x] **2.4** Document schema in `docs/schema.md` and `docs/schema.sql`
+- [ ] **2.5** Declare all variables up front — no magic strings in code. Every column name is listed in a config/data layer (e.g. `data/schema-columns.js`) with a comment linking it back to `docs/schema.sql`.
+- [ ] **2.6** Verify schema agreement — confirm `docs/schema.sql`, actual Supabase tables, and the code config layer are in exact agreement. **Andy's gate:** Andybot reviews and signs off before Phase 3 begins.
 
 ## Phase 3: Core UI
 
@@ -29,14 +31,33 @@
 
 ## Phase 4: Features
 
+> **⚠️ Schema Drift Gate — applies to every feature below**
+>
+> Every feature in Phase 4 touches the database. Before writing any code for a feature:
+>
+> 1. **Verify schema exists** — query Supabase directly and confirm the tables and columns the feature needs actually exist, with the expected names.
+> 2. **Compare against `docs/schema.sql`** — if a column is in schema.sql but missing or named differently in Supabase, the **code must be corrected to match Supabase** (schema.sql describes the intended design; if reality diverges, the code is what gets fixed).
+> 3. **After any schema change** — update `docs/schema.sql` to reflect the actual Supabase schema. Treat them as the same artifact.
+> 4. **Ghost variable rule** — All variables/columns used in code must be documented in `docs/schema.sql`. No variable in code that isn't in the schema, and no schema object that isn't used in code. Magic strings are not allowed; every column reference is declared up front.
+>
+> A feature that touches the database is **not done** if its code references a column that doesn't match what actually exists in Supabase.
+
 - [x] **4.1** Implement visions (3-Year, Fear, 1-Year) with Save/Edit workflow
+  - ☐ Schema verified against Supabase before build — no drift between `docs/schema.sql` and actual columns
 - [ ] **4.2** Implement Goals
+  - ☐ Schema verified against Supabase before build — no drift between `docs/schema.sql` and actual columns
 - [ ] **4.3** Implement Actions
+  - ☐ Schema verified against Supabase before build — no drift between `docs/schema.sql` and actual columns
 - [ ] **4.4** Implement Quarters
+  - ☐ Schema verified against Supabase before build — no drift between `docs/schema.sql` and actual columns
 - [ ] **4.5** Implement Weeks
+  - ☐ Schema verified against Supabase before build — no drift between `docs/schema.sql` and actual columns
 - [ ] **4.6** Implement Days
+  - ☐ Schema verified against Supabase before build — no drift between `docs/schema.sql` and actual columns
 - [ ] **4.7** Implement Habits
+  - ☐ Schema verified against Supabase before build — no drift between `docs/schema.sql` and actual columns
 - [ ] **4.8** Implement Todos/Tasks
+  - ☐ Schema verified against Supabase before build — no drift between `docs/schema.sql` and actual columns
 
 ## Phase 5: Polish & Launch
 
