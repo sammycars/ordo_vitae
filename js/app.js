@@ -41,6 +41,7 @@ class App {
         
         // Load initial view (saved or default to visions)
         const savedView = localStorage.getItem('ordo-current-view') || 'visions';
+        console.log('[App.init] user:', user?.id, 'savedView:', savedView, 'visionTab:', localStorage.getItem('ordo-vision-tab'));
         await this.loadView(savedView);
     }
 
