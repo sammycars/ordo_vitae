@@ -104,6 +104,7 @@
     resize: none;
     overflow: hidden;
     line-height: 1.6;
+    field-sizing: content;
 }
 
 /* Saveable textarea */
