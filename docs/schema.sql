@@ -6,12 +6,12 @@
 -- VISION
 -- ==========================================
 CREATE TABLE IF NOT EXISTS ordovision (
-    VISION_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
-    VISION_kind TEXT NOT NULL CHECK (VISION_kind IN ('three_year', 'fear', 'one_year')),
-    VISION_content TEXT,
-    VISION_created_at TIMESTAMPTZ DEFAULT now(),
-    VISION_updated_at TIMESTAMPTZ DEFAULT now()
+    vision_kind TEXT NOT NULL CHECK (vision_kind IN ('three_year', 'fear', 'one_year')),
+    vision_content TEXT,
+    created_at TIMESTAMPTZ DEFAULT now(),
+    updated_at TIMESTAMPTZ DEFAULT now()
 );
 
 -- ==========================================

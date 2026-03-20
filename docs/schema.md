@@ -8,7 +8,7 @@
 
 | OBJECT | OBJECT_properties |
 |--------|-------------------|
-| **VISION** | VISION_id, VISION_kind, VISION_content, VISION_created_at |
+| **VISION** | id, vision_kind, vision_content, created_at, updated_at |
 | **GOAL** | GOAL_id, GOAL_quarter_id, GOAL_realm, GOAL_title, GOAL_description, GOAL_completion_status |
 | **ACTION** | ACTION_id, ACTION_goal_id, ACTION_title, ACTION_completion_status |
 | **TASK** | TASK_id, TASK_action_id, TASK_title, TASK_scheduled_date, TASK_scheduled_time, TASK_completion_status, TASK_rollover |

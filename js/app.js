@@ -108,56 +108,6 @@ class App {
     }
 
     /**
-     * Save textarea content to Supabase
-     */
-    async saveTextarea(btn) {
-        const container = btn.closest('.saveable-textarea');
-        const textarea = container.querySelector('.saveable-input');
-        const status = container.querySelector('.save-status');
-        
-        const table = textarea.dataset.table;
-        const field = textarea.dataset.field;
-        const id = textarea.dataset.id;
-        const value = textarea.value;
-        
-        btn.disabled = true;
-        btn.textContent = '[ Saving... ]';
-        
-        try {
-            const client = this.supabase.getClient();
-            
-            if (id) {
-                // Update existing
-                await client.from(table).update({ 
-                    [field]: value,
-                    updated_at: new Date().toISOString()
-                }).eq('id', id);
-            } else {
-                // Insert new
-                const { data, error } = await client.from(table).insert({
-                    [field]: value
-                });
-                
-                if (data && data[0]) {
-                    textarea.dataset.id = data[0].id;
-                }
-            }
-            
-            // Show saved
-            btn.textContent = '[ Saved ]';
-            btn.classList.add('btn-saved');
-            btn.disabled = true;
-            
-        } catch (err) {
-            console.error('Save failed:', err);
-            btn.textContent = '[ Save ]';
-            btn.disabled = false;
-            status.textContent = 'Save failed: ' + err.message;
-            status.style.color = 'var(--danger)';
-        }
-    }
-
-    /**
      * Toggle edit mode for a textarea
      */
     toggleEdit(btn) {
@@ -205,12 +155,12 @@ class App {
                 // Update existing
                 await client.from(table).update({ 
                     [field]: value,
-                    VISION_updated_at: new Date().toISOString()
+                    updated_at: new Date().toISOString()
                 }).eq('id', id);
             } else {
                 // Insert new with user_id
                 const { data, error } = await client.from(table).insert({
-                    VISION_kind: kind,
+                    vision_kind: kind,
                     [field]: value,
                     user_id: user.id
                 });
