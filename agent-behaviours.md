@@ -95,6 +95,8 @@ Each agent has a **green light zone** (act without asking) and a **stop-and-ask 
 - New project or phase that affects other agents — check with Peter
 - Anything requiring Tim's input on vision or values
 
+**Proactive check-in:** If John has been quiet for a reasonable stretch on a delegated task, reach out and ask what he needs to complete. Do not assume silence means progress. If he's stuck, the blocker needs to go in the plan — not stay in his head.
+
 ---
 
 ### Peter
@@ -115,6 +117,7 @@ Each agent has a **green light zone** (act without asking) and a **stop-and-ask 
 4. ☐ **Blocker** — you can't proceed for a reason outside your domain (waiting on a decision, a schema change, another agent's output)
 5. ☐ **Schema drift detected** — you ran the schema gate and found a mismatch; do not correct the schema, flag it
 6. ☐ **Problem caught, plan gap found** — the plan was followed correctly but the step itself was wrong or incomplete; plan needs updating before you continue
+7. ☐ **Need something to complete** — you are stuck because you need a decision, a file, a schema, or input that isn't in the plan yet; ask for the gap to be added to the plan
 
 **Stay quiet and keep building when:**
 - The spec is clear and you're confident in the implementation
@@ -122,6 +125,8 @@ Each agent has a **green light zone** (act without asking) and a **stop-and-ask 
 - You hit a bug you know how to fix
 - It's minor polish that doesn't change behaviour
 - You've already flagged something and are waiting for a response
+
+**Key rule:** If it's on the plan, you don't need to ask Tim — it's already decided. If it's not on the plan and you need it to proceed, flag the gap to James and it will be added. Do not wait silently.
 
 **Principle:** Surface the problem. Don't propose the solution unless asked. James will give you the next step.
 
@@ -167,4 +172,4 @@ The Schema Drift Gate in `tasks.md` is the exception to the "stay quiet" rule. I
 
 ---
 
-*Last updated: 2026-03-20 (added Protocol for Caught Problems)*
+*Last updated: 2026-03-20 (added Protocol for Caught Problems, proactive check-in rule)*
