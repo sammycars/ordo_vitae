@@ -230,6 +230,29 @@ class App {
             this.content.innerHTML = '<p>View not found.</p>';
         }
     }
+
+    /**
+     * Show an inline message (no popups)
+     * @param {string} text
+     * @param {string} type - 'success' | 'error' | 'info'
+     */
+    showMessage(text, type = 'info') {
+        // Remove existing message
+        const existing = this.content.querySelector('.app-message');
+        if (existing) existing.remove();
+
+        const msg = document.createElement('div');
+        msg.className = `message message-${type} app-message`;
+        msg.textContent = text;
+        msg.style.marginBottom = 'var(--space-md)';
+
+        this.content.insertBefore(msg, this.content.firstChild);
+
+        // Auto-remove success/info messages after 3s
+        if (type !== 'error') {
+            setTimeout(() => msg.remove(), 3000);
+        }
+    }
 }
 
 // Initialize auth when DOM is ready

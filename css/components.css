@@ -405,3 +405,51 @@
 .flex-center { align-items: center; }
 .gap-sm { gap: var(--space-sm); }
 .gap-md { gap: var(--space-md); }
+
+/* ============================================
+   Goals View
+   ============================================ */
+
+.realm-tag {
+    font-size: var(--font-size-sm);
+    color: var(--text-muted);
+    padding: 2px var(--space-sm);
+    border: 1px solid var(--border);
+    white-space: nowrap;
+}
+
+.goal-card {
+    transition: border-color var(--transition);
+}
+
+.goal-card:hover {
+    border-color: var(--accent);
+}
+
+/* ============================================
+   Inline Messages
+   ============================================ */
+
+.app-message {
+    padding: var(--space-sm) var(--space-md);
+    margin-bottom: var(--space-md);
+    border: 1px solid var(--border);
+    font-size: var(--font-size-sm);
+    white-space: pre-line;
+    animation: fadeIn 0.2s ease;
+}
+
+.app-message.message-error {
+    border-color: var(--danger);
+    color: var(--danger);
+}
+
+.app-message.message-success {
+    border-color: var(--accent);
+    color: var(--accent);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-4px); }
+    to { opacity: 1; transform: translateY(0); }
+}

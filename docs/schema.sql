@@ -21,7 +21,7 @@ CREATE TABLE IF NOT EXISTS ordoquarter (
     quarter_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
     quarter_year INTEGER NOT NULL,
-    quarter INTEGER NOT NULL CHECK (quarter BETWEEN 1 AND 4),
+    quarter_quarter INTEGER NOT NULL CHECK (quarter_quarter BETWEEN 1 AND 4),
     quarter_start_date DATE NOT NULL,
     quarter_end_date DATE NOT NULL,
     quarter_created_at TIMESTAMPTZ DEFAULT now()
@@ -57,9 +57,9 @@ CREATE TABLE IF NOT EXISTS ordogoal (
     goal_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
     goal_quarter_id UUID REFERENCES ordoquarter(quarter_id) ON DELETE SET NULL,
-    realm TEXT,
-    title TEXT NOT NULL,
-    description TEXT,
+    goal_realm TEXT,
+    goal_title TEXT NOT NULL,
+    goal_description TEXT,
     completion_status TEXT DEFAULT 'planned' CHECK (completion_status IN ('planned', 'in_progress', 'complete')),
     goal_created_at TIMESTAMPTZ DEFAULT now(),
     goal_updated_at TIMESTAMPTZ DEFAULT now()
@@ -72,7 +72,7 @@ CREATE TABLE IF NOT EXISTS ordoaction (
     action_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
     action_goal_id UUID REFERENCES ordogoal(goal_id) ON DELETE CASCADE,
-    title TEXT NOT NULL,
+    action_title TEXT NOT NULL,
     completion_status TEXT DEFAULT 'pending' CHECK (completion_status IN ('pending', 'complete')),
     action_created_at TIMESTAMPTZ DEFAULT now(),
     action_updated_at TIMESTAMPTZ DEFAULT now()
@@ -85,7 +85,7 @@ CREATE TABLE IF NOT EXISTS ordotask (
     task_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
     task_action_id UUID REFERENCES ordoaction(action_id) ON DELETE CASCADE,
-    title TEXT NOT NULL,
+    task_title TEXT NOT NULL,
     scheduled_date DATE,
     scheduled_time TIME,
     completion_status TEXT DEFAULT 'pending' CHECK (completion_status IN ('pending', 'complete')),
@@ -100,7 +100,7 @@ CREATE TABLE IF NOT EXISTS ordotask (
 CREATE TABLE IF NOT EXISTS ordotodo (
     todo_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
-    title TEXT NOT NULL,
+    todo_title TEXT NOT NULL,
     scheduled_date DATE,
     scheduled_time TIME,
     completion_status TEXT DEFAULT 'pending' CHECK (completion_status IN ('pending', 'complete')),
