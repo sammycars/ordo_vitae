@@ -30,6 +30,10 @@ class App {
     async init(user) {
         this.currentUser = user;
         
+        // Initialize debug panel
+        this.debugPanel = new window.DebugPanel();
+        this.debugPanel.log('app', 'init', { userId: user?.id });
+        
         // Set up navigation
         this.setupNavigation();
         
@@ -41,13 +45,7 @@ class App {
         
         // Load initial view (saved or default to visions)
         const savedView = localStorage.getItem('ordo-current-view') || 'visions';
-        console.log('[App.init] user:', user?.id, 'savedView:', savedView, 'visionTab:', localStorage.getItem('ordo-vision-tab'));
-        // Visible debug
-        const dbg = document.createElement('div');
-        dbg.style = 'position:fixed;top:0;left:0;background:#111;color:#0f0;padding:4px;font-size:11px;z-index:99999;font-family:monospace;';
-        dbg.textContent = `APP_INIT uid=${user?.id} view=${savedView} tab=${localStorage.getItem('ordo-vision-tab')}`;
-        document.body.prepend(dbg);
-        setTimeout(() => dbg.remove(), 8000);
+        this.debugPanel.log('view', `loading ${savedView}`);
         await this.loadView(savedView);
     }
 
@@ -225,15 +223,16 @@ class App {
 
         // Get view instance and render
         const view = this.getView(viewName);
-        console.log('[App] loadView:', viewName, view ? 'found' : 'NOT FOUND', view && view.render ? 'has render' : 'no render');
+        this.debugPanel.log('view', `loadView: ${viewName} ${view ? 'found' : 'NOT FOUND'} ${view?.render ? 'has render' : 'no render'}`);
         if (view && view.render) {
             try {
                 const result = view.render();
                 if (result && typeof result.then === 'function') {
                     await result;
                 }
-                console.log('[App] render complete for:', viewName);
+                this.debugPanel.log('view', `render complete: ${viewName}`);
             } catch (err) {
+                this.debugPanel.log('error', `render failed: ${viewName}: ${err.message}`);
                 console.error('[App] render error:', err);
             }
             

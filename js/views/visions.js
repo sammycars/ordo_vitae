@@ -20,18 +20,12 @@ class VisionsView {
     }
 
     async render() {
-        console.log('[Visions.render] starting, currentUser:', this.app.currentUser?.id);
+        this.app.debugPanel.log('view', 'visions render starting', { userId: this.app.currentUser?.id });
         // Load existing visions from Supabase
         const visions = await this.loadVisions();
-        console.log('[Visions.render] visions loaded:', visions.length);
-
-        // Debug: show in page
+        this.app.debugPanel.log('db', `visions loaded: ${visions.length}`);
         const savedTab = localStorage.getItem('ordo-vision-tab') || '3year';
-        const debugDiv = document.createElement('div');
-        debugDiv.style = 'position:fixed;top:0;left:0;background:#111;color:#0f0;padding:4px;font-size:11px;z-index:9999;';
-        debugDiv.textContent = `DEBUG: render called, user=${this.app.currentUser?.id} visions=${visions.length} savedTab=${savedTab}`;
-        document.body.prepend(debugDiv);
-        setTimeout(() => debugDiv.remove(), 5000);
+        this.app.debugPanel.log('view', `saved tab: ${savedTab}`);
         
         const threeYear = visions.find(v => v.vision_kind === SCHEMA.VISION.kind.three_year);
         const fear = visions.find(v => v.vision_kind === SCHEMA.VISION.kind.fear);
@@ -134,7 +128,7 @@ class VisionsView {
             if (error) throw error;
             return data || [];
         } catch (err) {
-            console.error('Failed to load visions:', err);
+            this.app.debugPanel.log('error', `loadVisions failed: ${err.message}`);
             return [];
         }
     }
@@ -165,13 +159,13 @@ class VisionsView {
         
         // Restore saved tab
         const savedTab = localStorage.getItem('ordo-vision-tab') || '3year';
-        console.log('[Visions] setupTabs, savedTab:', savedTab);
+        this.app.debugPanel.log('view', `setupTabs, restoring: ${savedTab}`);
         this.activateTab(savedTab, tabs, contents);
         
         tabs.forEach(tab => {
             tab.addEventListener('click', () => {
                 const tabId = tab.dataset.tab;
-                console.log('[Visions] tab clicked:', tabId);
+                this.app.debugPanel.log('view', `tab clicked: ${tabId}`);
                 localStorage.setItem('ordo-vision-tab', tabId);
                 this.activateTab(tabId, tabs, contents);
             });
@@ -179,7 +173,7 @@ class VisionsView {
     }
 
     activateTab(tabId, tabs, contents) {
-        console.log('[Visions] activating tab:', tabId);
+        this.app.debugPanel.log('view', `activating tab: ${tabId}`);
         tabs.forEach(t => t.classList.toggle('active', t.dataset.tab === tabId));
         contents.forEach(c => c.classList.toggle('active', c.id === `tab-${tabId}`));
     }
