@@ -39,9 +39,13 @@ class Auth {
             console.log('Auth event:', event, session ? 'user logged in' : 'no session');
             if (session) {
                 this.currentUser = session.user;
+                const display = document.getElementById('user-display');
+                if (display) display.textContent = session.user.email;
                 this.showDashboard();
             } else {
                 this.currentUser = null;
+                const display = document.getElementById('user-display');
+                if (display) display.textContent = '';
                 this.showLogin();
             }
         });
@@ -52,6 +56,8 @@ class Auth {
                 const { data: { session } } = await this.supabase.getClient().auth.getSession();
                 if (session) {
                     this.currentUser = session.user;
+                    const display = document.getElementById('user-display');
+                    if (display) display.textContent = session.user.email;
                     this.showDashboard();
                 } else {
                     this.showLogin();

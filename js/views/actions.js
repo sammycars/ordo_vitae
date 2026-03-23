@@ -31,7 +31,7 @@ class ActionsView {
 
     async loadGoals() {
         const client = this.app.supabase.getClient();
-        const user = this.app.supabase.getUser();
+        const user = this.app.currentUser;
         if (!user) return;
 
         const { data, error } = await client
@@ -50,7 +50,7 @@ class ActionsView {
 
     async loadActions() {
         const client = this.app.supabase.getClient();
-        const user = this.app.supabase.getUser();
+        const user = this.app.currentUser;
         if (!user) return;
 
         const { data, error } = await client
@@ -77,12 +77,6 @@ class ActionsView {
             : this.actions.filter(a => a[SCHEMA.ACTION.columns.completion_status] === filter);
 
         const html = `
-            <div class="tabs">
-                <button class="tab ${this.activeTab === 'all' ? 'active' : ''}" onclick="window.ordoApp.actionsView.setTab('all')">[ All ]</button>
-                <button class="tab ${this.activeTab === 'pending' ? 'active' : ''}" onclick="window.ordoApp.actionsView.setTab('pending')">[ Pending ]</button>
-                <button class="tab ${this.activeTab === 'complete' ? 'active' : ''}" onclick="window.ordoApp.actionsView.setTab('complete')">[ Complete ]</button>
-            </div>
-
             <div class="button-group" style="margin-bottom: var(--space-md);">
                 <button class="btn" onclick="window.ordoApp.actionsView.showAddForm()">[ + New Action ]</button>
             </div>
@@ -209,7 +203,7 @@ class ActionsView {
     }
 
     async insertAction() {
-        const user = this.app.supabase.getUser();
+        const user = this.app.currentUser;
         if (!user) return;
 
         const card = document.getElementById('new-action-form');
@@ -246,7 +240,7 @@ class ActionsView {
     }
 
     async saveAction(id) {
-        const user = this.app.supabase.getUser();
+        const user = this.app.currentUser;
         if (!user) return;
 
         const card = document.querySelector(`.action-card[data-id="${id}"]`);
@@ -288,7 +282,7 @@ class ActionsView {
     }
 
     async toggleComplete(id, currentStatus) {
-        const user = this.app.supabase.getUser();
+        const user = this.app.currentUser;
         if (!user) return;
 
         const newStatus = currentStatus === SCHEMA.ACTION.status.complete
@@ -319,7 +313,7 @@ class ActionsView {
     async deleteAction(id) {
         if (!confirm('Delete this action?')) return;
 
-        const user = this.app.supabase.getUser();
+        const user = this.app.currentUser;
         if (!user) return;
 
         const client = this.app.supabase.getClient();

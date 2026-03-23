@@ -33,9 +33,9 @@ class VisionsView {
 
         const html = `
             <div class="tabs">
-                <div class="tab active" data-tab="3year">3-Year Vision</div>
-                <div class="tab" data-tab="fear">Fear Vision</div>
-                <div class="tab" data-tab="1year">1-Year Vision</div>
+                <div class="tab active" data-tab="3year">[ 3-Year Vision ]</div>
+                <div class="tab" data-tab="fear">[ Fear Vision ]</div>
+                <div class="tab" data-tab="1year">[ 1-Year Vision ]</div>
             </div>
             
             <div class="tab-content active" id="tab-3year">
@@ -154,21 +154,22 @@ class VisionsView {
     }
 
     setupTabs() {
-        const tabs = document.querySelectorAll('.tab');
-        const contents = document.querySelectorAll('.tab-content');
-        
+        const container = this.app.content;
+        const contents = container.querySelectorAll('.tab-content');
+
         // Restore saved tab
         const savedTab = localStorage.getItem('ordo-vision-tab') || '3year';
-        this.app.debugPanel.log('view', `setupTabs, restoring: ${savedTab}`);
+        const tabs = container.querySelectorAll('.tab');
         this.activateTab(savedTab, tabs, contents);
-        
-        tabs.forEach(tab => {
-            tab.addEventListener('click', () => {
-                const tabId = tab.dataset.tab;
-                this.app.debugPanel.log('view', `tab clicked: ${tabId}`);
-                localStorage.setItem('ordo-vision-tab', tabId);
-                this.activateTab(tabId, tabs, contents);
-            });
+
+        // Use event delegation — single listener on container, fires only for visions .tab elements
+        container.addEventListener('click', (e) => {
+            const tab = e.target.closest('.tab');
+            if (!tab || !container.contains(tab)) return;
+            const tabId = tab.dataset.tab;
+            if (!tabId) return;
+            localStorage.setItem('ordo-vision-tab', tabId);
+            this.activateTab(tabId, tabs, contents);
         });
     }
 

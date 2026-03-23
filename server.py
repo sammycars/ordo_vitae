@@ -135,5 +135,6 @@ if __name__ == "__main__":
     print(f"  GET  /api/state.json        — app state history")
     print(f"  POST /api/state             — app posts state here")
     
+    socketserver.TCPServer.allow_reuse_address = True
     with socketserver.TCPServer(("", PORT), LoggingHTTPRequestHandler) as httpd:
         httpd.serve_forever()

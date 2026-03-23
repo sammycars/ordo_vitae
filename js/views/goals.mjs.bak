@@ -18,10 +18,9 @@ class GoalsView {
     }
 
     async render() {
+        this.activeQuarterTab = 'Q1';
         await this.loadQuarters();
         await this.loadGoals();
-        // Default to first existing quarter
-        this.activeQuarterTab = Object.keys(this.quarterMap)[0] || 'Q1';
         this.showGoals();
     }
 
@@ -42,14 +41,11 @@ class GoalsView {
         }
 
         this.quarters = data || [];
-        // Build a map: Q1 -> quarter_id, etc. using the actual quarter number from each row.
+        // Build a map: Q1 -> quarter_id, etc.
         this.quarterMap = {};
-        this.quarterMapById = {}; // quarter_id -> label
-        this.quarters.forEach((q) => {
-            const qNum = q[SCHEMA.QUARTER.columns.quarter]; // 1-4
-            const label = 'Q' + qNum;
-            this.quarterMap[label] = q[SCHEMA.QUARTER.columns.id];
-            this.quarterMapById[q[SCHEMA.QUARTER.columns.id]] = label;
+        const labels = ['Q1', 'Q2', 'Q3', 'Q4'];
+        this.quarters.forEach((q, i) => {
+            if (i < 4) this.quarterMap[labels[i]] = q[SCHEMA.QUARTER.columns.id];
         });
     }
 
@@ -78,68 +74,58 @@ class GoalsView {
             ? this.goals.filter(g => g[SCHEMA.GOAL.columns.quarter_id] === quarterId)
             : this.goals;
 
-        // Sort by realm: Personal, Family, Church, Work
-        const realmOrder = { Personal: 0, Family: 1, Church: 2, Work: 3 };
-        filtered.sort((a, b) => {
-            const ra = realmOrder[a[SCHEMA.GOAL.columns.realm]] ?? 99;
-            const rb = realmOrder[b[SCHEMA.GOAL.columns.realm]] ?? 99;
-            return ra - rb;
-        });
-
         // Get current quarter's date range
-        const currentQuarterId = this.quarterMap[this.activeQuarterTab];
-        const currentQuarter = this.quarters.find(q => q[SCHEMA.QUARTER.columns.id] === currentQuarterId);
+        const currentQuarter = this.quarters.find((q, i) => {
+            const labels = ['Q1', 'Q2', 'Q3', 'Q4'];
+            return labels[i] === this.activeQuarterTab;
+        });
         const fmt = d => {
             if (!d) return '';
             const [y, m, day] = d.split('-');
             const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-            return `${months[parseInt(m)-1]} ${parseInt(day)}`;
+            return `${months[parseInt(m)-1]} ${parseInt(day)}, ${y}`;
         };
 
-        const quarterTitle = currentQuarter
-            ? `${fmt(currentQuarter[SCHEMA.QUARTER.columns.start_date])} \u2013 ${fmt(currentQuarter[SCHEMA.QUARTER.columns.end_date])}`
-            : 'All Goals';
+        const quarterLabels = {Q1: 'Quarter 1', Q2: 'Quarter 2', Q3: 'Quarter 3', Q4: 'Quarter 4'};
+        const quarterName = quarterLabels[this.activeQuarterTab] || this.activeQuarterTab;
+        if (currentQuarter) {
+            const start = currentQuarter[SCHEMA.QUARTER.columns.start_date] || '';
+            const end = currentQuarter[SCHEMA.QUARTER.columns.end_date] || '';
+            quarterTitle = `${quarterName}  ${fmt(start)} \u2013 ${fmt(end)}`;
+        } else {
+            quarterTitle = quarterName;
+        }
 
-        // Only render tabs for quarters that exist
-        const allLabels = ['Q1', 'Q2', 'Q3', 'Q4'];
-        const tabLabels = ['Quarter 1', 'Quarter 2', 'Quarter 3', 'Quarter 4'];
-        const existingTabs = allLabels.filter(l => !!this.quarterMap[l]);
+        // Build tab labels from actual quarter dates
+        const labels = ['Q1', 'Q2', 'Q3', 'Q4'];
+        const tabLabels = this.quarters.map((q, i) => {
+            const start = q[SCHEMA.QUARTER.columns.start_date] || '';
+            const end = q[SCHEMA.QUARTER.columns.end_date] || '';
+            return `[ ${fmt(start)} \u2013 ${fmt(end)} ]`;
+        });
 
         const html = `
             <div class="tabs" id="goals-quarter-tabs">
-                ${existingTabs.map((q, i) => `<div class="tab ${q === this.activeQuarterTab ? 'active' : ''}" data-quarter="${q}">[ ${tabLabels[allLabels.indexOf(q)]} ]</div>`).join('')}
+                ${labels.map((q, i) => `<div class="tab" data-quarter="${q}">${tabLabels[i] || q}</div>`).join('')}
             </div>
 
-            <h2 style="margin: var(--space-md) 0 var(--space-sm) 0; font-size: 18px; font-weight: normal; color: var(--text-primary);">${quarterTitle}</h2>
+            <h2 style="margin: var(--space-md) 0 var(--space-sm) 0; font-size: var(--font-size-h3); font-weight: normal; color: var(--text-primary);">${quarterTitle}</h2>
+
+            <div class="button-group" style="margin-bottom: var(--space-md);">
+                <button class="btn" onclick="window.ordoApp.goalsView.showAddForm()">[ + New Goal ]</button>
+            </div>
 
             ${filtered.length === 0 ? '<p class="placeholder">No goals for ' + quarterTitle + '.</p>' : ''}
 
             ${filtered.map(goal => this.goalCard(goal)).join('')}
-
-            ${this.goals.length > 0 ? `
-                <div style="margin-top: var(--space-lg); padding-top: var(--space-md); border-top: 1px solid var(--border);">
-                    <p style="font-size: 11px; color: var(--text-muted); margin-bottom: var(--space-sm);">GOALS</p>
-                    <div style="display: flex; gap: var(--space-md); flex-wrap: wrap;">
-                        ${this.goals.map(g => `<span style="color: var(--text-secondary); font-size: 13px;">${this.escapeHtml(g[SCHEMA.GOAL.columns.title] || 'Untitled')}</span>`).join('')}
-                    </div>
-                </div>
-            ` : ''}
         `;
 
         this.app.content.innerHTML = html;
 
-        // Bind goal card buttons
-        this.app.content.querySelectorAll('.edit-goal-btn').forEach(btn => {
-            btn.addEventListener('click', () => this.toggleEdit(btn.dataset.goalId));
-        });
-        this.app.content.querySelectorAll('.delete-goal-btn').forEach(btn => {
-            btn.addEventListener('click', () => this.deleteGoal(btn.dataset.goalId));
-        });
-        this.app.content.querySelectorAll('.save-goal-btn').forEach(btn => {
-            btn.addEventListener('click', () => this.saveGoal(btn.dataset.goalId));
-        });
-        this.app.content.querySelectorAll('.cancel-goal-btn').forEach(btn => {
-            btn.addEventListener('click', () => this.toggleEdit(btn.dataset.goalId));
+        // Set initial active tab appearance
+        const tabs = this.app.content.querySelectorAll('.tab');
+        tabs.forEach(t => {
+            if (t.dataset.quarter === this.activeQuarterTab) t.classList.add('active');
         });
 
         // Event delegation for quarter tab clicks
@@ -153,9 +139,6 @@ class GoalsView {
         // Cancel button in add form
         const cancelBtn = document.getElementById('cancel-goal-btn');
         if (cancelBtn) cancelBtn.addEventListener('click', () => this.showGoals());
-
-        const createBtn = document.getElementById('create-goal-btn');
-        if (createBtn) createBtn.addEventListener('click', () => this.insertGoal());
     }
 
     goalCard(goal) {
@@ -168,20 +151,18 @@ class GoalsView {
         return `
             <div class="card goal-card" data-id="${goal[SCHEMA.GOAL.columns.id]}">
                 <div class="card-header">
-                    <span class="card-title" style="color: white;">${title || 'Untitled'}</span>
+                    <span class="card-title">${this.escapeHtml(title)}</span>
                     <div style="display: flex; gap: var(--space-sm); align-items: center;">
-                        <button class="btn btn-secondary edit-goal-btn" data-goal-id="${goal[SCHEMA.GOAL.columns.id]}">[ Edit ]</button>
-                        <button class="btn btn-danger delete-goal-btn" data-goal-id="${goal[SCHEMA.GOAL.columns.id]}">[ Delete ]</button>
+                        ${realm ? `<span class="realm-tag">${this.escapeHtml(realm)}</span>` : ''}
+                        <button class="btn btn-secondary" onclick="window.ordoApp.goalsView.toggleEdit(this)">[ Edit ]</button>
+                        <button class="btn btn-danger" onclick="window.ordoApp.goalsView.deleteGoal('${goal[SCHEMA.GOAL.columns.id]}')">[ Delete ]</button>
                     </div>
                 </div>
-                ${description ? `<p style="margin: var(--space-xs) 0; color: var(--text-secondary);">${this.escapeHtml(description)}</p>` : ''}
+                ${description ? `<p style="margin: var(--space-sm) 0; color: var(--text-secondary);">${this.escapeHtml(description)}</p>` : ''}
                 <div class="goal-display">
                     <p style="font-size: var(--font-size-sm); color: var(--text-muted);">
                         Status: ${status} ${isComplete ? '✓' : ''}
                     </p>
-                </div>
-                <div style="margin-top: var(--space-sm); padding-top: var(--space-xs); border-top: 1px solid var(--border);">
-                    <span style="font-size: 11px; color: white; opacity: 0.6;">[ ${this.escapeHtml(realm) || 'No realm'} ]</span>
                 </div>
                 <div class="goal-edit" style="display: none; margin-top: var(--space-md);">
                     <input
@@ -200,7 +181,7 @@ class GoalsView {
                             <option value="">— Realm —</option>
                             <option value="Personal" ${realm === 'Personal' ? 'selected' : ''}>Personal</option>
                             <option value="Family" ${realm === 'Family' ? 'selected' : ''}>Family</option>
-                            <option value="Church" ${realm === 'Church' ? 'selected' : ''}>Church</option>
+                            <option value="Ministry" ${realm === 'Ministry' ? 'selected' : ''}>Ministry</option>
                             <option value="Work" ${realm === 'Work' ? 'selected' : ''}>Work</option>
                         </select>
                         <select class="input goal-status-input" style="max-width: 200px;">
@@ -210,8 +191,8 @@ class GoalsView {
                         </select>
                     </div>
                     <div style="margin-top: var(--space-sm);">
-                        <button class="btn save-goal-btn" data-goal-id="${goal[SCHEMA.GOAL.columns.id]}">[ Save ]</button>
-                        <button class="btn btn-secondary cancel-goal-btn" data-goal-id="${goal[SCHEMA.GOAL.columns.id]}">[ Cancel ]</button>
+                        <button class="btn" onclick="window.ordoApp.goalsView.saveGoal('${goal[SCHEMA.GOAL.columns.id]}')">[ Save ]</button>
+                        <button class="btn btn-secondary" onclick="window.ordoApp.goalsView.toggleEdit(this)">[ Cancel ]</button>
                     </div>
                 </div>
             </div>
@@ -240,7 +221,7 @@ class GoalsView {
                         <option value="">— Realm —</option>
                         <option value="Personal">Personal</option>
                         <option value="Family">Family</option>
-                        <option value="Church">Church</option>
+                        <option value="Ministry">Ministry</option>
                         <option value="Work">Work</option>
                     </select>
                     <select class="input goal-status-input" style="max-width: 200px;">
@@ -250,7 +231,7 @@ class GoalsView {
                     </select>
                 </div>
                 <div>
-                    <button class="btn" id="create-goal-btn">[ Create ]</button>
+                    <button class="btn" onclick="window.ordoApp.goalsView.insertGoal()">[ Create ]</button>
                     <button class="btn btn-secondary" id="cancel-goal-btn">[ Cancel ]</button>
                 </div>
             </div>
@@ -264,25 +245,20 @@ class GoalsView {
         this.showGoals();
     }
 
-    toggleEdit(goalId) {
-        console.log('toggleEdit called with:', goalId);
-        const card = document.querySelector(`.goal-card[data-id="${goalId}"]`);
-        if (!card) { console.error('toggleEdit: no card found'); return; }
+    toggleEdit(btn) {
+        const card = btn.closest('.goal-card');
         const display = card.querySelector('.goal-display');
         const edit = card.querySelector('.goal-edit');
-        if (!edit) { console.error('toggleEdit: no edit div'); return; }
         const isEditing = edit.style.display !== 'none';
 
         if (isEditing) {
             edit.style.display = 'none';
             display.style.display = 'block';
-            const editBtn = card.querySelector('[data-action="edit"]');
-            if (editBtn) editBtn.textContent = '[ Edit ]';
+            btn.textContent = '[ Edit ]';
         } else {
             edit.style.display = 'block';
             display.style.display = 'none';
-            const editBtn = card.querySelector('[data-action="edit"]');
-            if (editBtn) editBtn.textContent = '[ Cancel ]';
+            btn.textContent = '[ Cancel ]';
         }
     }
 
@@ -330,7 +306,6 @@ class GoalsView {
     }
 
     async saveGoal(id) {
-        console.log('saveGoal called with:', id);
         const user = this.app.currentUser;
         if (!user) return;
 

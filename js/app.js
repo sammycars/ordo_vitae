@@ -65,7 +65,7 @@ class App {
         this.navLinks.forEach(link => {
             link.addEventListener('click', async (e) => {
                 e.preventDefault();
-                const view = e.target.dataset.view;
+                const view = e.currentTarget.dataset.view;
                 if (view) {
                     await this.loadView(view);
                 }
