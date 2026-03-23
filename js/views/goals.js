@@ -112,18 +112,13 @@ class GoalsView {
 
             <h2 style="margin: var(--space-md) 0 var(--space-sm) 0; font-size: 18px; font-weight: normal; color: var(--text-primary);">${quarterTitle}</h2>
 
-            ${filtered.length === 0 ? '<p class="placeholder">No goals for ' + quarterTitle + '.</p>' : ''}
-
-            ${filtered.map((goal, i) => this.goalCard(goal, i)).join('')}
-
-            ${this.goals.length > 0 ? `
-                <div style="margin-top: var(--space-lg); padding-top: var(--space-md); border-top: 1px solid var(--border);">
-                    <p style="font-size: 11px; color: var(--text-muted); margin-bottom: var(--space-sm);">GOALS</p>
-                    <div style="display: flex; gap: var(--space-md); flex-wrap: wrap;">
-                        ${this.goals.map(g => `<span style="color: var(--text-secondary); font-size: 13px;">${this.escapeHtml(g[SCHEMA.GOAL.columns.title] || 'Untitled')}</span>`).join('')}
-                    </div>
-                </div>
-            ` : ''}
+            ${['Personal', 'Family', 'Church', 'Work'].map((realm) => {
+                const realmOrder = ['Personal', 'Family', 'Church', 'Work'];
+                const goalForRealm = filtered.find((g, idx) => realmOrder[idx] === realm);
+                return goalForRealm
+                    ? this.goalCard(goalForRealm)
+                    : this.emptyGoalCard(realm);
+            }).join('')}
         `;
 
         this.app.content.innerHTML = html;
@@ -156,18 +151,21 @@ class GoalsView {
 
         const createBtn = document.getElementById('create-goal-btn');
         if (createBtn) createBtn.addEventListener('click', () => this.insertGoal());
+
+        // [+ New] button on empty goal cards
+        this.app.content.querySelectorAll('.add-goal-btn').forEach(btn => {
+            btn.addEventListener('click', () => this.showAddForm(btn.dataset.realm));
+        });
     }
 
-    goalCard(goal, idx) {
-        const realmOrder = ['Personal', 'Family', 'Church', 'Work'];
-        const realm = realmOrder[idx] || '';
+    goalCard(goal, realm) {
         const title = this.escapeHtml(goal[SCHEMA.GOAL.columns.title] || '');
         const description = this.escapeHtml(goal[SCHEMA.GOAL.columns.description] || '');
 
         return `
             <div style="margin-bottom: 2px;">
                 <div style="font-size: 16px; color: orange; margin-bottom: 1px;">${this.escapeHtml(realm) || 'No realm'}</div>
-                <div class="card goal-card" data-id="${goal[SCHEMA.GOAL.columns.id]}" style="padding: 6px; margin-bottom: 4px;">
+                <div class="card goal-card" data-id="${goal[SCHEMA.GOAL.columns.id]}" style="padding: 6px; margin-bottom: 4px; min-height: auto;">
                     <div class="card-header" style="margin-bottom: 2px;">
                         <span class="card-title" style="color: white; font-size: 14px;">${title || 'Untitled'}</span>
                         <div style="display: flex; gap: var(--space-sm); align-items: center;">
@@ -200,11 +198,26 @@ class GoalsView {
         `;
     }
 
-    showAddForm() {
+    emptyGoalCard(realm) {
+        return `
+            <div style="margin-bottom: 2px;">
+                <div style="font-size: 16px; color: orange; margin-bottom: 1px;">${this.escapeHtml(realm)}</div>
+                <div class="card goal-card" style="padding: 6px; margin-bottom: 4px; min-height: auto; opacity: 0.6; border-style: dashed;">
+                    <div class="card-header" style="margin-bottom: 2px;">
+                        <span style="color: var(--text-muted); font-size: 14px;">No Goal</span>
+                        <button class="btn add-goal-btn" style="padding: 2px 8px; font-size: 11px;" data-realm="${this.escapeHtml(realm)}">[ + New ]</button>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    showAddForm(preSelectedRealm) {
+        this.selectedRealm = preSelectedRealm || null;
         const html = `
-            <div class="card" id="new-goal-form">
+            <div class="card" id="new-goal-form" style="min-height: auto;">
                 <div class="card-header">
-                    <span class="card-title">New Goal</span>
+                    <span class="card-title" style="color: orange;">${this.escapeHtml(this.selectedRealm || 'New Goal')}</span>
                 </div>
                 <input
                     type="text"
@@ -272,6 +285,7 @@ class GoalsView {
         const insert = {
             [SCHEMA.GOAL.columns.title]: title,
             [SCHEMA.GOAL.columns.description]: description,
+            [SCHEMA.GOAL.columns.realm]: this.selectedRealm || '',
             [SCHEMA.GOAL.columns.user_id]: user.id
         };
 
