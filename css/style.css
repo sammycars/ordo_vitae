@@ -87,7 +87,7 @@ body {
 
 .view {
     min-height: 100vh;
-    padding: var(--space-lg);
+    padding: var(--space-sm) var(--space-lg);
 }
 
 /* Login View */
@@ -114,9 +114,6 @@ body {
     display: flex;
     flex-direction: column;
     gap: var(--space-md);
-    padding-bottom: var(--space-lg);
-    border-bottom: 1px solid var(--border);
-    margin-bottom: var(--space-lg);
     flex-wrap: wrap;
 }
 
@@ -185,6 +182,11 @@ body {
 
 .nav-link:hover {
     color: var(--accent);
+}
+
+.nav-link.active {
+    color: var(--accent) !important;
+    font-weight: bold;
 }
 
 /* Dev link - distinctive styling */
@@ -289,6 +291,135 @@ input::placeholder {
 /* ============================================
    Mobile Responsiveness
    ============================================ */
+/* ============================================
+   Day Cells (Days View)
+   ============================================ */
+
+.day-cell {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 2px;
+    border-radius: 4px;
+    font-size: var(--font-size-xs);
+    cursor: pointer;
+    transition: background 0.15s;
+    min-height: 36px;
+}
+
+.day-cell-dow {
+    opacity: 0.6;
+    font-size: 9px;
+    line-height: 1;
+}
+
+.day-cell-num {
+    font-weight: bold;
+    line-height: 1.2;
+}
+
+.day-cell--filled {
+    background: var(--accent);
+    color: var(--bg-primary);
+}
+
+.day-cell--filled:hover {
+    background: var(--accent-hover, #a855f7);
+}
+
+.day-cell--empty {
+    background: var(--bg-secondary);
+    color: var(--text-muted);
+    border: 1px dashed var(--border);
+}
+
+.day-cell--empty:hover {
+    background: var(--bg-tertiary);
+    color: var(--text-secondary);
+}
+
+/* ============================================
+   Habit Son Cells (Habits View)
+   ============================================ */
+
+.habit-son-cell {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 40px;
+    border-radius: 4px;
+    font-size: var(--font-size-xs);
+    cursor: pointer;
+    transition: background 0.15s;
+    position: relative;
+}
+
+.habit-son-dow {
+    opacity: 0.5;
+    font-size: 9px;
+    line-height: 1;
+}
+
+.habit-son-num {
+    font-weight: bold;
+    line-height: 1.2;
+}
+
+.habit-son-check {
+    position: absolute;
+    bottom: 2px;
+    right: 3px;
+    font-size: 8px;
+    color: #22c55e;
+}
+
+.habit-son-cell--done {
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    border: 1px solid var(--accent);
+}
+
+.habit-son-cell--done:hover {
+    background: var(--bg-tertiary);
+}
+
+.habit-son-cell--missed {
+    background: var(--bg-secondary);
+    color: var(--text-muted);
+    opacity: 0.5;
+}
+
+.habit-son-cell--empty {
+    background: var(--bg-secondary);
+    color: var(--text-secondary);
+    border: 1px dashed var(--border);
+}
+
+.habit-son-cell--empty:hover {
+    background: var(--accent);
+    color: var(--bg-primary);
+    border-color: var(--accent);
+}
+
+.habit-son-cell--future {
+    background: var(--bg-tertiary);
+    color: var(--text-muted);
+    opacity: 0.4;
+    cursor: default;
+}
+
+.realm-tag {
+    font-size: var(--font-size-xs);
+    padding: 1px 6px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    color: var(--text-secondary);
+}
+
 @media (max-width: 768px) {
     .header {
         flex-direction: column;
@@ -310,5 +441,9 @@ input::placeholder {
 
     .btn {
         width: 100%;
+    }
+
+    .day-cell {
+        min-height: 32px;
     }
 }

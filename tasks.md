@@ -55,13 +55,15 @@
 - [x] **4.4** Implement Quarters
   - ✅ Schema verified 2026-03-23 — quarter_id, user_id, quarter_year, quarter_quarter, quarter_start_date, quarter_end_date, quarter_created_at. All match.
   - ✅ QuartersView implemented — js/views/quarters.js. Full CRUD: grouped by year, create/edit/delete, auto date ranges per quarter.
-- [ ] **4.5** Implement Weeks
-  - ☐ Schema verified against Supabase before build — no drift between `docs/schema.sql` and actual columns
-- [ ] **4.6** Implement Days
-  - ☐ Schema verified against Supabase before build — no drift between `docs/schema.sql` and actual columns
-- [ ] **4.7** Implement Habits
-  - ☐ Schema verified against Supabase before build — no drift between `docs/schema.sql` and actual columns
-  - ⚠️ HABIT_FATHER.name is `habit_father_name` in actual Supabase (confirmed 2026-03-23). schema.sql and schema.md previously said `name` — fixed. config.js correctly uses `habit_father_name`.
+- [x] **4.5** Implement Weeks
+  - ✅ Schema verified 2026-03-25 — week_id, user_id, week_quarter_id, week_start_date, week_end_date, week_created_at. All match.
+  - ✅ WeeksView implemented — js/views/weeks.js. Full CRUD: grouped by quarter, create/edit/delete, auto-generate weeks for a quarter (Mon–Sun alignment), auto-generate for all quarters. CSS day-cell styles added.
+- [x] **4.6** Implement Days
+  - ✅ Schema verified 2026-03-25 — day_id, user_id, day_week_id, day_date, day_created_at. All match.
+  - ✅ DaysView implemented — js/views/days.js. Full CRUD: 7-column week grid (Mon–Sun), click empty cell to add day, click filled cell to delete, auto-generate for all weeks. CSS day-cell styles added.
+- [x] **4.7** Implement Habits
+  - ✅ Schema verified 2026-03-25 — habit_father_id, habit_father_name, habit_father_target_days, habit_father_is_paused, habit_father_paused_reason. All match. habit_son columns also verified.
+  - ✅ HabitsView implemented — js/views/habits.js. Two-table layout: habit_father CRUD (create/edit/pause/resume/delete), habit_son tracking (click to complete/undo daily log), auto-seed 7 days when habit is created, 21-day grid (past 13 + future 7). CSS habit-son-cell styles added.
 - [ ] **4.8** Implement Todos/Tasks
   - ☐ Schema verified against Supabase before build — no drift between `docs/schema.sql` and actual columns
 
