@@ -223,7 +223,7 @@ class GoalsView {
                         <span class="card-title" style="color: white; font-size: 14px;">${title || 'Untitled'}</span>
                         <div style="display: flex; gap: 4px; align-items: center;">
                             <button class="btn btn-secondary edit-goal-btn" data-goal-id="${goal[SCHEMA.GOAL.columns.id]}" style="padding: 2px 6px; font-size: 11px;">[ Edit ]</button>
-                            <button class="btn btn-danger delete-goal-btn" data-goal-id="${goal[SCHEMA.GOAL.columns.id]}" style="padding: 2px 6px; font-size: 11px;">[ Delete ]</button>
+                            <button class="btn btn-danger delete-goal-btn" data-goal-id="${goal[SCHEMA.GOAL.columns.id]}" data-confirm="false" style="padding: 2px 6px; font-size: 11px;">[ Delete ]</button>
                         </div>
                     </div>
                     ${description ? `<p style="margin: 2px 0; color: var(--text-secondary); font-size: 13px;">${this.escapeHtml(description)}</p>` : ''}
@@ -262,15 +262,15 @@ class GoalsView {
                     const isComplete = t[SCHEMA.TASK.columns.completion_status] === 'complete';
                     return `
                         <div style="display: flex; align-items: center; gap: 4px; margin-bottom: 1px;">
-                            <span style="flex: 1; font-size: 13px; color: white; opacity: ${isComplete ? '0.3' : '0.7'}; text-decoration: ${isComplete ? 'line-through' : 'none'};">${ttitle}</span>
-                            <button class="btn btn-secondary" style="padding: 1px 4px; font-size: 10px;" onclick="window.ordoApp.goalsView.toggleTaskEdit('${tid}')">[ Edit ]</button>
-                            <button class="btn btn-danger" style="padding: 1px 4px; font-size: 10px;" onclick="window.ordoApp.goalsView.deleteTask('${tid}')">[x]</button>
+                            <span style="flex: 1; font-size: 14px; color: white; opacity: ${isComplete ? '0.4' : '1'}; text-decoration: ${isComplete ? 'line-through' : 'none'};">${ttitle}</span>
+                            <button class="btn btn-secondary" style="padding: 2px 6px; font-size: 11px;" onclick="window.ordoApp.goalsView.toggleTaskEdit('${tid}')">[ Edit ]</button>
+                            <button class="btn btn-danger task-del-btn" data-tid="${tid}" data-confirm="false" style="padding: 2px 6px; font-size: 11px;" onclick="window.ordoApp.goalsView.deleteTask('${tid}')">[ Delete ]</button>
                         </div>
                         <div class="task-edit-card" data-id="${tid}" style="display: none; padding-left: 16px; margin-bottom: 2px;">
-                            <input type="text" class="input task-title-input" value="${ttitle}" style="width: 100%; color: white;">
+                            <input type="text" class="input task-title-input" value="${ttitle}" style="width: 100%; color: white; font-size: 14px;">
                             <div style="display: flex; gap: 4px; margin-top: 2px;">
-                                <button class="btn" style="padding: 1px 4px; font-size: 10px;" onclick="window.ordoApp.goalsView.saveTask('${tid}')">[ Save ]</button>
-                                <button class="btn btn-secondary" style="padding: 1px 4px; font-size: 10px;" onclick="window.ordoApp.goalsView.toggleTaskEdit('${tid}')">[ Cancel ]</button>
+                                <button class="btn" style="padding: 2px 6px; font-size: 11px;" onclick="window.ordoApp.goalsView.saveTask('${tid}')">[ Save ]</button>
+                                <button class="btn btn-secondary" style="padding: 2px 6px; font-size: 11px;" onclick="window.ordoApp.goalsView.toggleTaskEdit('${tid}')">[ Cancel ]</button>
                             </div>
                         </div>
                     `;
@@ -288,21 +288,30 @@ class GoalsView {
         if (!card) return;
         const isVisible = card.style.display !== 'none';
         document.querySelectorAll('.task-edit-card').forEach(el => el.style.display = 'none');
-        if (!isVisible) card.style.display = 'block';
+        if (!isVisible) {
+            card.style.display = 'block';
+            card.querySelector('.task-title-input')?.focus();
+        }
     }
 
     async addTaskForAction(actionId) {
         const user = this.app.currentUser;
         if (!user) return;
         const client = this.app.supabase.getClient();
+
         await client.from(SCHEMA.TASK.table).insert({
             [SCHEMA.TASK.columns.action_id]: actionId,
             [SCHEMA.TASK.columns.title]: 'New Task',
             [SCHEMA.TASK.columns.completion_status]: 'pending',
             [SCHEMA.TASK.columns.user_id]: user.id
         });
+
         await this.loadTasks();
         await this.loadGoals();
+        this.showGoals();
+        // Find the newly created task and open its edit form
+        const newTask = (this.tasksByAction[actionId] || []).find(t => t[SCHEMA.TASK.columns.title] === 'New Task');
+        if (newTask) this.toggleTaskEdit(newTask[SCHEMA.TASK.columns.id]);
     }
 
     async saveTask(taskId) {
@@ -312,17 +321,42 @@ class GoalsView {
         if (!card) return;
         const title = card.querySelector('.task-title-input').value.trim();
         if (!title) return;
+        const description = card.querySelector('.task-desc-input')?.value.trim() || '';
+        const scheduledDate = card.querySelector('.task-date-input')?.value || '';
+        const scheduledTime = card.querySelector('.task-time-input')?.value || '';
+        const status = card.querySelector('.task-status-input')?.value || 'pending';
         const client = this.app.supabase.getClient();
         await client.from(SCHEMA.TASK.table)
-            .update({ [SCHEMA.TASK.columns.title]: title })
+            .update({
+                [SCHEMA.TASK.columns.title]: title,
+                [SCHEMA.TASK.columns.description]: description,
+                [SCHEMA.TASK.columns.scheduled_date]: scheduledDate,
+                [SCHEMA.TASK.columns.scheduled_time]: scheduledTime,
+                [SCHEMA.TASK.columns.completion_status]: status
+            })
             .eq(SCHEMA.TASK.columns.id, taskId)
             .eq(SCHEMA.TASK.columns.user_id, user.id);
         await this.loadTasks();
         await this.loadGoals();
+        this.showGoals();
     }
 
     async deleteTask(taskId) {
-        if (!confirm('Delete this task?')) return;
+        const el = document.querySelector(`.task-del-btn[data-tid="${taskId}"]`);
+        if (!el) return;
+        if (el.dataset.confirm !== 'true') {
+            el.textContent = '[ Confirm ]';
+            el.dataset.confirm = 'true';
+            setTimeout(() => {
+                if (el.dataset.confirm === 'true') {
+                    el.textContent = '[ Delete ]';
+                    el.dataset.confirm = 'false';
+                }
+            }, 3000);
+            return;
+        }
+        el.textContent = '[ Delete ]';
+        el.dataset.confirm = 'false';
         const user = this.app.currentUser;
         if (!user) return;
         const client = this.app.supabase.getClient();
@@ -347,7 +381,7 @@ class GoalsView {
                             <div style="display: flex; align-items: center; gap: 4px;">
                                 <span style="flex: 1; font-size: 14px; color: white; opacity: ${isComplete ? '0.4' : '1'}; text-decoration: ${isComplete ? 'line-through' : 'none'};">${title}</span>
                                 <button class="btn btn-secondary" style="padding: 2px 6px; font-size: 11px;" onclick="window.ordoApp.goalsView.toggleActionEdit('${id}')">[ Edit ]</button>
-                                <button class="btn btn-danger" style="padding: 2px 6px; font-size: 11px;" onclick="window.ordoApp.goalsView.deleteAction('${id}')">[ Delete ]</button>
+                                <button class="btn btn-danger action-del-btn" data-aid="${id}" data-confirm="false" style="padding: 2px 6px; font-size: 11px;" onclick="window.ordoApp.goalsView.deleteAction('${id}')">[ Delete ]</button>
                             </div>
                             <div class="action-edit-card" data-id="${id}" style="display: none; margin-top: 4px;">
                                 <input type="text" class="input action-title-input" value="${title}" style="width: 100%; color: white;">
@@ -390,7 +424,21 @@ class GoalsView {
     }
 
     async deleteAction(actionId) {
-        if (!confirm('Delete this action?')) return;
+        const el = document.querySelector(`.action-del-btn[data-aid="${actionId}"]`);
+        if (!el) return;
+        if (el.dataset.confirm !== 'true') {
+            el.textContent = '[ Confirm ]';
+            el.dataset.confirm = 'true';
+            setTimeout(() => {
+                if (el.dataset.confirm === 'true') {
+                    el.textContent = '[ Delete ]';
+                    el.dataset.confirm = 'false';
+                }
+            }, 3000);
+            return;
+        }
+        el.textContent = '[ Delete ]';
+        el.dataset.confirm = 'false';
         const user = this.app.currentUser;
         if (!user) return;
         const client = this.app.supabase.getClient();
@@ -399,6 +447,7 @@ class GoalsView {
             .eq(SCHEMA.ACTION.columns.id, actionId)
             .eq(SCHEMA.ACTION.columns.user_id, user.id);
         await this.loadActions();
+        await this.loadGoals();
         this.showGoals();
     }
 
