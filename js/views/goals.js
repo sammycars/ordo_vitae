@@ -1,10 +1,10 @@
 /**
  * Goals View - Ordo_Vitae
- * 
- * Displays goals grouped by completion status.
- * Tabbed interface: All | Planned | In Progress | Complete
+ *
+ * Displays goals grouped by quarter and completion status.
+ * Sub-tabs: Q1 | Q2 | Q3 | Q4
  * Each goal is editable inline.
- * 
+ *
  * Schema: SCHEMA.GOAL (from config.js)
  */
 
@@ -12,18 +12,46 @@ class GoalsView {
     constructor(app) {
         this.app = app;
         this.goals = [];
-        this.activeTab = 'all'; // all | planned | in_progress | complete
+        this.quarters = [];
+        this.activeQuarterTab = 'Q1';
+        this.quarterMap = {};
     }
 
     async render() {
-        this.activeTab = 'all';
+        this.activeQuarterTab = 'Q1';
+        await this.loadQuarters();
         await this.loadGoals();
         this.showGoals();
     }
 
+    async loadQuarters() {
+        const client = this.app.supabase.getClient();
+        const user = this.app.currentUser;
+        if (!user) return;
+
+        const { data, error } = await client
+            .from(SCHEMA.QUARTER.table)
+            .select('*')
+            .eq(SCHEMA.QUARTER.columns.user_id, user.id)
+            .order(SCHEMA.QUARTER.columns.start_date, { ascending: true });
+
+        if (error) {
+            console.error('Failed to load quarters:', error);
+            return;
+        }
+
+        this.quarters = data || [];
+        // Build a map: Q1 -> quarter_id, etc.
+        this.quarterMap = {};
+        const labels = ['Q1', 'Q2', 'Q3', 'Q4'];
+        this.quarters.forEach((q, i) => {
+            if (i < 4) this.quarterMap[labels[i]] = q[SCHEMA.QUARTER.columns.id];
+        });
+    }
+
     async loadGoals() {
         const client = this.app.supabase.getClient();
-        const user = this.app.supabase.getUser();
+        const user = this.app.currentUser;
         if (!user) return;
 
         const { data, error } = await client
@@ -40,29 +68,73 @@ class GoalsView {
         this.goals = data || [];
     }
 
-    showGoals(filter = 'all') {
-        const filtered = filter === 'all'
-            ? this.goals
-            : this.goals.filter(g => g[SCHEMA.GOAL.columns.completion_status] === filter);
+    showGoals() {
+        const quarterId = this.quarterMap[this.activeQuarterTab];
+        const filtered = quarterId
+            ? this.goals.filter(g => g[SCHEMA.GOAL.columns.quarter_id] === quarterId)
+            : this.goals;
+
+        // Get current quarter's date range
+        const currentQuarter = this.quarters.find((q, i) => {
+            const labels = ['Q1', 'Q2', 'Q3', 'Q4'];
+            return labels[i] === this.activeQuarterTab;
+        });
+        const fmt = d => {
+            if (!d) return '';
+            const [y, m, day] = d.split('-');
+            const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+            return `${months[parseInt(m)-1]} ${parseInt(day)}, ${y}`;
+        };
+
+        const quarterLabels = {Q1: 'Quarter 1', Q2: 'Quarter 2', Q3: 'Quarter 3', Q4: 'Quarter 4'};
+        const quarterName = quarterLabels[this.activeQuarterTab] || this.activeQuarterTab;
+        const quarterTitle = currentQuarter
+            ? `${quarterName}  ${fmt(currentQuarter[SCHEMA.QUARTER.columns.start_date] || '')} \u2013 ${fmt(currentQuarter[SCHEMA.QUARTER.columns.end_date] || '')}`
+            : quarterName;
+
+        // Build tab labels from actual quarter dates
+        const labels = ['Q1', 'Q2', 'Q3', 'Q4'];
+        const tabLabels = this.quarters.map((q, i) => {
+            const start = q[SCHEMA.QUARTER.columns.start_date] || '';
+            const end = q[SCHEMA.QUARTER.columns.end_date] || '';
+            return `[ ${fmt(start)} \u2013 ${fmt(end)} ]`;
+        });
 
         const html = `
-            <div class="tabs">
-                <button class="tab ${this.activeTab === 'all' ? 'active' : ''}" onclick="window.ordoApp.goalsView.setTab('all')">[ All ]</button>
-                <button class="tab ${this.activeTab === 'planned' ? 'active' : ''}" onclick="window.ordoApp.goalsView.setTab('planned')">[ Planned ]</button>
-                <button class="tab ${this.activeTab === 'in_progress' ? 'active' : ''}" onclick="window.ordoApp.goalsView.setTab('in_progress')">[ In Progress ]</button>
-                <button class="tab ${this.activeTab === 'complete' ? 'active' : ''}" onclick="window.ordoApp.goalsView.setTab('complete')">[ Complete ]</button>
+            <div class="tabs" id="goals-quarter-tabs">
+                ${labels.map((q, i) => `<div class="tab" data-quarter="${q}">${tabLabels[i] || q}</div>`).join('')}
             </div>
+
+            <h2 style="margin: var(--space-md) 0 var(--space-sm) 0; font-size: var(--font-size-h3); font-weight: normal; color: var(--text-primary);">${quarterTitle}</h2>
 
             <div class="button-group" style="margin-bottom: var(--space-md);">
                 <button class="btn" onclick="window.ordoApp.goalsView.showAddForm()">[ + New Goal ]</button>
             </div>
 
-            ${filtered.length === 0 ? '<p class="placeholder">No goals in this category.</p>' : ''}
+            ${filtered.length === 0 ? '<p class="placeholder">No goals for ' + quarterTitle + '.</p>' : ''}
 
             ${filtered.map(goal => this.goalCard(goal)).join('')}
         `;
 
         this.app.content.innerHTML = html;
+
+        // Set initial active tab appearance
+        const tabs = this.app.content.querySelectorAll('.tab');
+        tabs.forEach(t => {
+            if (t.dataset.quarter === this.activeQuarterTab) t.classList.add('active');
+        });
+
+        // Event delegation for quarter tab clicks
+        this.app.content.querySelectorAll('.tab[data-quarter]').forEach(tab => {
+            tab.addEventListener('click', () => {
+                const q = tab.dataset.quarter;
+                this.setQuarterTab(q);
+            });
+        });
+
+        // Cancel button in add form
+        const cancelBtn = document.getElementById('cancel-goal-btn');
+        if (cancelBtn) cancelBtn.addEventListener('click', () => this.showGoals());
     }
 
     goalCard(goal) {
@@ -89,14 +161,14 @@ class GoalsView {
                     </p>
                 </div>
                 <div class="goal-edit" style="display: none; margin-top: var(--space-md);">
-                    <input 
-                        type="text" 
-                        class="input goal-title-input" 
+                    <input
+                        type="text"
+                        class="input goal-title-input"
                         placeholder="Goal title..."
                         value="${this.escapeHtml(title)}"
                     >
-                    <textarea 
-                        class="input goal-desc-input" 
+                    <textarea
+                        class="input goal-desc-input"
                         placeholder="Description (optional)..."
                         style="margin-top: var(--space-sm);"
                     >${this.escapeHtml(description)}</textarea>
@@ -129,14 +201,14 @@ class GoalsView {
                 <div class="card-header">
                     <span class="card-title">New Goal</span>
                 </div>
-                <input 
-                    type="text" 
-                    class="input goal-title-input" 
+                <input
+                    type="text"
+                    class="input goal-title-input"
                     placeholder="Goal title..."
                     style="width: 100%; margin-bottom: var(--space-sm);"
                 >
-                <textarea 
-                    class="input goal-desc-input" 
+                <textarea
+                    class="input goal-desc-input"
                     placeholder="Description (optional)..."
                     style="width: 100%; margin-bottom: var(--space-sm);"
                 ></textarea>
@@ -156,7 +228,7 @@ class GoalsView {
                 </div>
                 <div>
                     <button class="btn" onclick="window.ordoApp.goalsView.insertGoal()">[ Create ]</button>
-                    <button class="btn btn-secondary" onclick="window.ordoApp.goalsView.showGoals('${this.activeTab}')">[ Cancel ]</button>
+                    <button class="btn btn-secondary" id="cancel-goal-btn">[ Cancel ]</button>
                 </div>
             </div>
         `;
@@ -164,9 +236,9 @@ class GoalsView {
         this.app.content.innerHTML = html + this.app.content.innerHTML;
     }
 
-    setTab(tab) {
-        this.activeTab = tab;
-        this.showGoals(tab);
+    setQuarterTab(tab) {
+        this.activeQuarterTab = tab;
+        this.showGoals();
     }
 
     toggleEdit(btn) {
@@ -187,7 +259,7 @@ class GoalsView {
     }
 
     async insertGoal() {
-        const user = this.app.supabase.getUser();
+        const user = this.app.currentUser;
         if (!user) return;
 
         const card = document.getElementById('new-goal-form');
@@ -203,13 +275,21 @@ class GoalsView {
 
         const client = this.app.supabase.getClient();
 
-        const { error } = await client.from(SCHEMA.GOAL.table).insert({
+        const insert = {
             [SCHEMA.GOAL.columns.title]: title,
             [SCHEMA.GOAL.columns.description]: description,
             [SCHEMA.GOAL.columns.realm]: realm,
             [SCHEMA.GOAL.columns.completion_status]: status,
             [SCHEMA.GOAL.columns.user_id]: user.id
-        });
+        };
+
+        // Set the quarter_id to match the active quarter tab
+        const quarterId = this.quarterMap[this.activeQuarterTab];
+        if (quarterId) {
+            insert[SCHEMA.GOAL.columns.quarter_id] = quarterId;
+        }
+
+        const { error } = await client.from(SCHEMA.GOAL.table).insert(insert);
 
         if (error) {
             console.error('Failed to create goal:', error);
@@ -218,11 +298,11 @@ class GoalsView {
         }
 
         await this.loadGoals();
-        this.showGoals(this.activeTab);
+        this.showGoals();
     }
 
     async saveGoal(id) {
-        const user = this.app.supabase.getUser();
+        const user = this.app.currentUser;
         if (!user) return;
 
         const card = document.querySelector(`.goal-card[data-id="${id}"]`);
@@ -256,13 +336,13 @@ class GoalsView {
         }
 
         await this.loadGoals();
-        this.showGoals(this.activeTab);
+        this.showGoals();
     }
 
     async deleteGoal(id) {
         if (!confirm('Delete this goal?')) return;
 
-        const user = this.app.supabase.getUser();
+        const user = this.app.currentUser;
         if (!user) return;
 
         const client = this.app.supabase.getClient();
@@ -279,7 +359,7 @@ class GoalsView {
         }
 
         await this.loadGoals();
-        this.showGoals(this.activeTab);
+        this.showGoals();
     }
 
     escapeHtml(str) {
