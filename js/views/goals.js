@@ -162,7 +162,6 @@ class GoalsView {
         const realmOrder = ['Personal', 'Family', 'Church', 'Work'];
         const realm = realmOrder[idx] || '';
         const title = this.escapeHtml(goal[SCHEMA.GOAL.columns.title] || '');
-        const status = goal[SCHEMA.GOAL.columns.completion_status] || '';
         const description = this.escapeHtml(goal[SCHEMA.GOAL.columns.description] || '');
 
         return `
@@ -190,13 +189,7 @@ class GoalsView {
                         placeholder="Description (optional)..."
                         style="margin-bottom: 4px;"
                     >${this.escapeHtml(description)}</textarea>
-                    <div style="display: flex; gap: var(--space-sm); flex-wrap: wrap; margin-top: 4px;">
-                        <select class="input goal-status-input" style="max-width: 200px;">
-                            <option value="planned" ${status === 'planned' ? 'selected' : ''}>Planned</option>
-                            <option value="in_progress" ${status === 'in_progress' ? 'selected' : ''}>In Progress</option>
-                            <option value="complete" ${status === 'complete' ? 'selected' : ''}>Complete</option>
-                        </select>
-                    </div>
+
                     <div style="margin-top: 4px;">
                         <button class="btn save-goal-btn" data-goal-id="${goal[SCHEMA.GOAL.columns.id]}" style="padding: 2px 6px; font-size: 11px;">[ Save ]</button>
                         <button class="btn btn-secondary cancel-goal-btn" data-goal-id="${goal[SCHEMA.GOAL.columns.id]}" style="padding: 2px 6px; font-size: 11px;">[ Cancel ]</button>
@@ -224,13 +217,6 @@ class GoalsView {
                     placeholder="Description (optional)..."
                     style="width: 100%; margin-bottom: var(--space-sm);"
                 ></textarea>
-                <div style="display: flex; gap: var(--space-md); margin-bottom: var(--space-sm); flex-wrap: wrap;">
-                    <select class="input goal-status-input" style="max-width: 200px;">
-                        <option value="planned" selected>Planned</option>
-                        <option value="in_progress">In Progress</option>
-                        <option value="complete">Complete</option>
-                    </select>
-                </div>
                 <div>
                     <button class="btn" id="create-goal-btn">[ Create ]</button>
                     <button class="btn btn-secondary" id="cancel-goal-btn">[ Cancel ]</button>
@@ -275,7 +261,6 @@ class GoalsView {
         const card = document.getElementById('new-goal-form');
         const title = card.querySelector('.goal-title-input').value.trim();
         const description = card.querySelector('.goal-desc-input').value.trim();
-        const status = card.querySelector('.goal-status-input').value;
 
         if (!title) {
             this.app.showMessage('Goal title is required.', 'error');
@@ -287,7 +272,6 @@ class GoalsView {
         const insert = {
             [SCHEMA.GOAL.columns.title]: title,
             [SCHEMA.GOAL.columns.description]: description,
-            [SCHEMA.GOAL.columns.completion_status]: status,
             [SCHEMA.GOAL.columns.user_id]: user.id
         };
 
@@ -317,7 +301,6 @@ class GoalsView {
         const card = document.querySelector(`.goal-card[data-id="${id}"]`);
         const title = card.querySelector('.goal-title-input').value.trim();
         const description = card.querySelector('.goal-desc-input').value.trim();
-        const status = card.querySelector('.goal-status-input').value;
 
         if (!title) {
             this.app.showMessage('Goal title is required.', 'error');
@@ -330,7 +313,6 @@ class GoalsView {
             .update({
                 [SCHEMA.GOAL.columns.title]: title,
                 [SCHEMA.GOAL.columns.description]: description,
-                [SCHEMA.GOAL.columns.completion_status]: status,
                 [SCHEMA.GOAL.columns.updated_at]: new Date().toISOString()
             })
             .eq(SCHEMA.GOAL.columns.id, id)
