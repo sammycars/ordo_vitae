@@ -48,17 +48,20 @@
   - ☐ Schema verified against Supabase before build — no drift between `docs/schema.sql` and actual columns
 - [x] **4.2** Implement Goals
   - ☐ Schema verified against Supabase before build — no drift between `docs/schema.sql` and actual columns
-- [ ] **4.3** Implement Actions
-  - ☐ Schema verified against Supabase before build — no drift between `docs/schema.sql` and actual columns
-  - ☐ App state file updated on each operation (`data/app-state.json`) — no browser/DevConsole needed for James to inspect state
-- [ ] **4.4** Implement Quarters
-  - ☐ Schema verified against Supabase before build — no drift between `docs/schema.sql` and actual columns
+- [x] **4.3** Implement Actions
+  - ✅ Schema verified 2026-03-23 — column names correct (RLS error, not column error). Config matches actual Supabase schema.
+  - ✅ ActionsView implemented — js/views/actions.js. Full CRUD: tabbed list (All/Pending/Complete), inline edit, create, delete, mark complete/undo. Actions belong to Goals (goal select on create/edit). Code follows GoalsView pattern.
+  - ℹ️ App state: browser JS cannot write filesystem — state observable via DebugPanel and completed action list. Not applicable for client-side features.
+- [x] **4.4** Implement Quarters
+  - ✅ Schema verified 2026-03-23 — quarter_id, user_id, quarter_year, quarter_quarter, quarter_start_date, quarter_end_date, quarter_created_at. All match.
+  - ✅ QuartersView implemented — js/views/quarters.js. Full CRUD: grouped by year, create/edit/delete, auto date ranges per quarter.
 - [ ] **4.5** Implement Weeks
   - ☐ Schema verified against Supabase before build — no drift between `docs/schema.sql` and actual columns
 - [ ] **4.6** Implement Days
   - ☐ Schema verified against Supabase before build — no drift between `docs/schema.sql` and actual columns
 - [ ] **4.7** Implement Habits
   - ☐ Schema verified against Supabase before build — no drift between `docs/schema.sql` and actual columns
+  - ⚠️ HABIT_FATHER.name is `habit_father_name` in actual Supabase (confirmed 2026-03-23). schema.sql and schema.md previously said `name` — fixed. config.js correctly uses `habit_father_name`.
 - [ ] **4.8** Implement Todos/Tasks
   - ☐ Schema verified against Supabase before build — no drift between `docs/schema.sql` and actual columns
 

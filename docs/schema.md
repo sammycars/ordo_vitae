@@ -16,7 +16,7 @@
 | **QUARTER** | quarter_id, user_id, quarter_year, quarter, quarter_start_date, quarter_end_date, quarter_created_at |
 | **WEEK** | week_id, user_id, week_quarter_id, week_start_date, week_end_date, week_created_at |
 | **DAY** | day_id, user_id, day_week_id, day_date, day_created_at |
-| **HABIT_FATHER** | habit_father_id, user_id, name, target_days, is_paused, paused_reason, habit_father_created_at, habit_father_updated_at |
+| **HABIT_FATHER** | habit_father_id, user_id, habit_father_name, target_days, is_paused, paused_reason, habit_father_created_at, habit_father_updated_at |
 | **HABIT_SON** | habit_son_id, user_id, habit_son_habit_id, date, completion_status, habit_son_created_at |
 
 ---

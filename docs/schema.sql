@@ -115,7 +115,7 @@ CREATE TABLE IF NOT EXISTS ordotodo (
 CREATE TABLE IF NOT EXISTS ordohabit_father (
     habit_father_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
-    name TEXT NOT NULL,
+    habit_father_name TEXT NOT NULL,
     target_days INTEGER DEFAULT 7,
     is_paused BOOLEAN DEFAULT false,
     paused_reason TEXT,
