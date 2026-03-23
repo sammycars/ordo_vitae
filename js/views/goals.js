@@ -13,6 +13,7 @@ class GoalsView {
         this.app = app;
         this.goals = [];
         this.quarters = [];
+        this.actionsByGoal = {};
         this.activeQuarterTab = 'Q1';
         this.quarterMap = {};
     }
@@ -20,9 +21,34 @@ class GoalsView {
     async render() {
         await this.loadQuarters();
         await this.loadGoals();
+        await this.loadActions();
         // Default to first existing quarter
         this.activeQuarterTab = Object.keys(this.quarterMap)[0] || 'Q1';
         this.showGoals();
+    }
+
+    async loadActions() {
+        const client = this.app.supabase.getClient();
+        const user = this.app.currentUser;
+        if (!user) return;
+
+        const { data, error } = await client
+            .from(SCHEMA.ACTION.table)
+            .select('*')
+            .eq(SCHEMA.ACTION.columns.user_id, user.id)
+            .order(SCHEMA.ACTION.columns.created_at, { ascending: true });
+
+        if (error) {
+            console.error('Failed to load actions:', error);
+            return;
+        }
+
+        this.actionsByGoal = {};
+        for (const a of (data || [])) {
+            const gid = a[SCHEMA.ACTION.columns.goal_id];
+            if (!this.actionsByGoal[gid]) this.actionsByGoal[gid] = [];
+            this.actionsByGoal[gid].push(a);
+        }
     }
 
     async loadQuarters() {
@@ -174,6 +200,7 @@ class GoalsView {
                         </div>
                     </div>
                     ${description ? `<p style="margin: 2px 0; color: var(--text-secondary); font-size: 13px;">${this.escapeHtml(description)}</p>` : ''}
+                    ${this.renderActionItems(goal[SCHEMA.GOAL.columns.id])}
                     <div class="goal-edit" style="display: none; margin-top: var(--space-sm);">
                     <input
                         type="text"
@@ -196,6 +223,55 @@ class GoalsView {
             </div>
             </div>
         `;
+    }
+
+    renderActionItems(goalId) {
+        const actions = this.actionsByGoal[goalId] || [];
+        if (actions.length === 0) return '';
+        return `
+            <div style="display: flex; flex-direction: column; gap: 2px; margin-top: 4px;">
+                ${actions.map(a => {
+                    const id = a[SCHEMA.ACTION.columns.id];
+                    const title = this.escapeHtml(a[SCHEMA.ACTION.columns.title] || '');
+                    const isComplete = a[SCHEMA.ACTION.columns.completion_status] === 'complete';
+                    return `
+                        <div class="card" style="padding: 4px 6px; margin-bottom: 2px; min-height: auto;">
+                            <div style="display: flex; align-items: center; gap: 4px;">
+                                <input type="checkbox" ${isComplete ? 'checked' : ''} onchange="window.ordoApp.goalsView.toggleActionComplete('${id}', this.checked)" style="cursor: pointer;">
+                                <span style="flex: 1; font-size: 12px; color: ${isComplete ? 'var(--text-muted)' : 'var(--text-secondary)'}; text-decoration: ${isComplete ? 'line-through' : 'none'};">${title}</span>
+                                <button class="btn btn-secondary" style="padding: 1px 4px; font-size: 10px;" onclick="window.ordoApp.goalsView.deleteAction('${id}')">[x]</button>
+                            </div>
+                        </div>
+                    `;
+                }).join('')}
+            </div>
+        `;
+    }
+
+    async toggleActionComplete(actionId, checked) {
+        const user = this.app.currentUser;
+        if (!user) return;
+        const client = this.app.supabase.getClient();
+        const status = checked ? 'complete' : 'pending';
+        await client.from(SCHEMA.ACTION.table)
+            .update({ [SCHEMA.ACTION.columns.completion_status]: status })
+            .eq(SCHEMA.ACTION.columns.id, actionId)
+            .eq(SCHEMA.ACTION.columns.user_id, user.id);
+        await this.loadActions();
+        this.showGoals();
+    }
+
+    async deleteAction(actionId) {
+        if (!confirm('Delete this action?')) return;
+        const user = this.app.currentUser;
+        if (!user) return;
+        const client = this.app.supabase.getClient();
+        await client.from(SCHEMA.ACTION.table)
+            .delete()
+            .eq(SCHEMA.ACTION.columns.id, actionId)
+            .eq(SCHEMA.ACTION.columns.user_id, user.id);
+        await this.loadActions();
+        this.showGoals();
     }
 
     emptyGoalCard(realm) {
