@@ -194,7 +194,7 @@ class GoalsView {
                 <div class="card goal-card" data-id="${goal[SCHEMA.GOAL.columns.id]}" style="padding: 6px; margin-bottom: 4px; min-height: auto;">
                     <div class="card-header" style="margin-bottom: 2px;">
                         <span class="card-title" style="color: white; font-size: 14px;">${title || 'Untitled'}</span>
-                        <div style="display: flex; gap: var(--space-sm); align-items: center;">
+                        <div style="display: flex; gap: 4px; align-items: center;">
                             <button class="btn btn-secondary edit-goal-btn" data-goal-id="${goal[SCHEMA.GOAL.columns.id]}" style="padding: 2px 6px; font-size: 11px;">[ Edit ]</button>
                             <button class="btn btn-danger delete-goal-btn" data-goal-id="${goal[SCHEMA.GOAL.columns.id]}" style="padding: 2px 6px; font-size: 11px;">[ Delete ]</button>
                         </div>
@@ -229,34 +229,48 @@ class GoalsView {
         const actions = this.actionsByGoal[goalId] || [];
         if (actions.length === 0) return '';
         return `
-            <div style="display: flex; flex-direction: column; gap: 2px; margin-top: 4px;">
+            <div style="margin-top: 4px; padding-top: 4px; padding-left: 20px; border-top: 1px solid var(--border);">
                 ${actions.map(a => {
                     const id = a[SCHEMA.ACTION.columns.id];
                     const title = this.escapeHtml(a[SCHEMA.ACTION.columns.title] || '');
                     const isComplete = a[SCHEMA.ACTION.columns.completion_status] === 'complete';
                     return `
-                        <div class="card" style="padding: 4px 6px; margin-bottom: 2px; min-height: auto;">
+                        <div style="margin-bottom: 2px;">
                             <div style="display: flex; align-items: center; gap: 4px;">
-                                <input type="checkbox" ${isComplete ? 'checked' : ''} onchange="window.ordoApp.goalsView.toggleActionComplete('${id}', this.checked)" style="cursor: pointer;">
-                                <span style="flex: 1; font-size: 12px; color: ${isComplete ? 'var(--text-muted)' : 'var(--text-secondary)'}; text-decoration: ${isComplete ? 'line-through' : 'none'};">${title}</span>
-                                <button class="btn btn-secondary" style="padding: 1px 4px; font-size: 10px;" onclick="window.ordoApp.goalsView.deleteAction('${id}')">[x]</button>
+                                <span style="flex: 1; font-size: 14px; color: white; opacity: ${isComplete ? '0.4' : '1'}; text-decoration: ${isComplete ? 'line-through' : 'none'};">${title}</span>
+                                <button class="btn btn-secondary" style="padding: 2px 6px; font-size: 11px;" onclick="window.ordoApp.goalsView.toggleActionEdit('${id}')">[ Edit ]</button>
+                                <button class="btn btn-danger" style="padding: 2px 6px; font-size: 11px;" onclick="window.ordoApp.goalsView.deleteAction('${id}')">[ Delete ]</button>
+                            </div>
+                            <div class="action-edit-card" data-id="${id}" style="display: none; margin-top: 4px;">
+                                <input type="text" class="input action-title-input" value="${title}" style="width: 100%; color: white;">
+                                <div style="display: flex; gap: 4px; margin-top: 4px;">
+                                    <button class="btn" style="padding: 2px 6px; font-size: 11px;" onclick="window.ordoApp.goalsView.saveAction('${id}')">[ Save ]</button>
+                                    <button class="btn btn-secondary" style="padding: 2px 6px; font-size: 11px;" onclick="window.ordoApp.goalsView.toggleActionEdit('${id}')">[ Cancel ]</button>
+                                </div>
                             </div>
                         </div>
                     `;
                 }).join('')}
+                <div style="margin-bottom: 2px;">
+                    <div style="display: flex; align-items: center; gap: 4px;">
+                        <span style="flex: 1; font-size: 14px; color: white; opacity: 0.3;">New Action</span>
+                        <button class="btn" style="padding: 2px 6px; font-size: 11px;" onclick="window.ordoApp.goalsView.addActionForGoal('${goalId}')">[ + Add ]</button>
+                    </div>
+                </div>
             </div>
         `;
     }
 
-    async toggleActionComplete(actionId, checked) {
+    async addActionForGoal(goalId) {
         const user = this.app.currentUser;
         if (!user) return;
         const client = this.app.supabase.getClient();
-        const status = checked ? 'complete' : 'pending';
-        await client.from(SCHEMA.ACTION.table)
-            .update({ [SCHEMA.ACTION.columns.completion_status]: status })
-            .eq(SCHEMA.ACTION.columns.id, actionId)
-            .eq(SCHEMA.ACTION.columns.user_id, user.id);
+        await client.from(SCHEMA.ACTION.table).insert({
+            [SCHEMA.ACTION.columns.goal_id]: goalId,
+            [SCHEMA.ACTION.columns.title]: 'New Action',
+            [SCHEMA.ACTION.columns.completion_status]: 'pending',
+            [SCHEMA.ACTION.columns.user_id]: user.id
+        });
         await this.loadActions();
         this.showGoals();
     }
@@ -268,6 +282,33 @@ class GoalsView {
         const client = this.app.supabase.getClient();
         await client.from(SCHEMA.ACTION.table)
             .delete()
+            .eq(SCHEMA.ACTION.columns.id, actionId)
+            .eq(SCHEMA.ACTION.columns.user_id, user.id);
+        await this.loadActions();
+        this.showGoals();
+    }
+
+    toggleActionEdit(actionId) {
+        const card = document.querySelector(`.action-edit-card[data-id="${actionId}"]`);
+        if (!card) return;
+        const isVisible = card.style.display !== 'none';
+        // Close all other edit forms
+        document.querySelectorAll('.action-edit-card').forEach(el => el.style.display = 'none');
+        if (!isVisible) {
+            card.style.display = 'block';
+        }
+    }
+
+    async saveAction(actionId) {
+        const user = this.app.currentUser;
+        if (!user) return;
+        const card = document.querySelector(`.action-edit-card[data-id="${actionId}"]`);
+        if (!card) return;
+        const title = card.querySelector('.action-title-input').value.trim();
+        if (!title) return;
+        const client = this.app.supabase.getClient();
+        await client.from(SCHEMA.ACTION.table)
+            .update({ [SCHEMA.ACTION.columns.title]: title })
             .eq(SCHEMA.ACTION.columns.id, actionId)
             .eq(SCHEMA.ACTION.columns.user_id, user.id);
         await this.loadActions();
