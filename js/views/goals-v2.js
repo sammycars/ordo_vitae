@@ -15,6 +15,7 @@ class GoalsView {
         this.goals = [];
         this.quarters = [];
         this.actionsByGoal = {};
+        this.tasksByAction = {};
         this.activeQuarterTab = 'Q1';
         this.quarterMap = {};
     }
@@ -23,6 +24,7 @@ class GoalsView {
         await this.loadQuarters();
         await this.loadGoals();
         await this.loadActions();
+        await this.loadTasks();
         // Default to first existing quarter
         this.activeQuarterTab = Object.keys(this.quarterMap)[0] || 'Q1';
         this.showGoals();
@@ -49,6 +51,30 @@ class GoalsView {
             const gid = a[SCHEMA.ACTION.columns.goal_id];
             if (!this.actionsByGoal[gid]) this.actionsByGoal[gid] = [];
             this.actionsByGoal[gid].push(a);
+        }
+    }
+
+    async loadTasks() {
+        const client = this.app.supabase.getClient();
+        const user = this.app.currentUser;
+        if (!user) return;
+
+        const { data, error } = await client
+            .from(SCHEMA.TASK.table)
+            .select('*')
+            .eq(SCHEMA.TASK.columns.user_id, user.id)
+            .order(SCHEMA.TASK.columns.created_at, { ascending: true });
+
+        if (error) {
+            console.error('Failed to load tasks:', error);
+            return;
+        }
+
+        this.tasksByAction = {};
+        for (const t of (data || [])) {
+            const aid = t[SCHEMA.TASK.columns.action_id];
+            if (!this.tasksByAction[aid]) this.tasksByAction[aid] = [];
+            this.tasksByAction[aid].push(t);
         }
     }
 
@@ -226,6 +252,88 @@ class GoalsView {
         `;
     }
 
+    renderTaskItems(actionId) {
+        const tasks = this.tasksByAction[actionId] || [];
+        return `
+            <div style="padding-left: 16px; padding-top: 2px;">
+                ${tasks.map(t => {
+                    const tid = t[SCHEMA.TASK.columns.id];
+                    const ttitle = this.escapeHtml(t[SCHEMA.TASK.columns.title] || '');
+                    const isComplete = t[SCHEMA.TASK.columns.completion_status] === 'complete';
+                    return `
+                        <div style="display: flex; align-items: center; gap: 4px; margin-bottom: 1px;">
+                            <span style="flex: 1; font-size: 13px; color: white; opacity: ${isComplete ? '0.3' : '0.7'}; text-decoration: ${isComplete ? 'line-through' : 'none'};">${ttitle}</span>
+                            <button class="btn btn-secondary" style="padding: 1px 4px; font-size: 10px;" onclick="window.ordoApp.goalsView.toggleTaskEdit('${tid}')">[ Edit ]</button>
+                            <button class="btn btn-danger" style="padding: 1px 4px; font-size: 10px;" onclick="window.ordoApp.goalsView.deleteTask('${tid}')">[x]</button>
+                        </div>
+                        <div class="task-edit-card" data-id="${tid}" style="display: none; padding-left: 16px; margin-bottom: 2px;">
+                            <input type="text" class="input task-title-input" value="${ttitle}" style="width: 100%; color: white;">
+                            <div style="display: flex; gap: 4px; margin-top: 2px;">
+                                <button class="btn" style="padding: 1px 4px; font-size: 10px;" onclick="window.ordoApp.goalsView.saveTask('${tid}')">[ Save ]</button>
+                                <button class="btn btn-secondary" style="padding: 1px 4px; font-size: 10px;" onclick="window.ordoApp.goalsView.toggleTaskEdit('${tid}')">[ Cancel ]</button>
+                            </div>
+                        </div>
+                    `;
+                }).join('')}
+                <div style="display: flex; align-items: center; gap: 4px; opacity: 0.4;">
+                    <span style="flex: 1; font-size: 13px; color: white;">New Task</span>
+                    <button class="btn" style="padding: 1px 4px; font-size: 10px;" onclick="window.ordoApp.goalsView.addTaskForAction('${actionId}')">[ + ]</button>
+                </div>
+            </div>
+        `;
+    }
+
+    toggleTaskEdit(taskId) {
+        const card = document.querySelector(`.task-edit-card[data-id="${taskId}"]`);
+        if (!card) return;
+        const isVisible = card.style.display !== 'none';
+        document.querySelectorAll('.task-edit-card').forEach(el => el.style.display = 'none');
+        if (!isVisible) card.style.display = 'block';
+    }
+
+    async addTaskForAction(actionId) {
+        const user = this.app.currentUser;
+        if (!user) return;
+        const client = this.app.supabase.getClient();
+        await client.from(SCHEMA.TASK.table).insert({
+            [SCHEMA.TASK.columns.action_id]: actionId,
+            [SCHEMA.TASK.columns.title]: 'New Task',
+            [SCHEMA.TASK.columns.completion_status]: 'pending',
+            [SCHEMA.TASK.columns.user_id]: user.id
+        });
+        await this.loadTasks();
+        await this.loadGoals();
+    }
+
+    async saveTask(taskId) {
+        const user = this.app.currentUser;
+        if (!user) return;
+        const card = document.querySelector(`.task-edit-card[data-id="${taskId}"]`);
+        if (!card) return;
+        const title = card.querySelector('.task-title-input').value.trim();
+        if (!title) return;
+        const client = this.app.supabase.getClient();
+        await client.from(SCHEMA.TASK.table)
+            .update({ [SCHEMA.TASK.columns.title]: title })
+            .eq(SCHEMA.TASK.columns.id, taskId)
+            .eq(SCHEMA.TASK.columns.user_id, user.id);
+        await this.loadTasks();
+        await this.loadGoals();
+    }
+
+    async deleteTask(taskId) {
+        if (!confirm('Delete this task?')) return;
+        const user = this.app.currentUser;
+        if (!user) return;
+        const client = this.app.supabase.getClient();
+        await client.from(SCHEMA.TASK.table)
+            .delete()
+            .eq(SCHEMA.TASK.columns.id, taskId)
+            .eq(SCHEMA.TASK.columns.user_id, user.id);
+        await this.loadTasks();
+        await this.loadGoals();
+    }
+
     renderActionItems(goalId) {
         const actions = this.actionsByGoal[goalId] || [];
         return `
@@ -235,7 +343,7 @@ class GoalsView {
                     const title = this.escapeHtml(a[SCHEMA.ACTION.columns.title] || '');
                     const isComplete = a[SCHEMA.ACTION.columns.completion_status] === 'complete';
                     return `
-                        <div style="margin-bottom: 2px;">
+                        <div style="margin-bottom: 4px;">
                             <div style="display: flex; align-items: center; gap: 4px;">
                                 <span style="flex: 1; font-size: 14px; color: white; opacity: ${isComplete ? '0.4' : '1'}; text-decoration: ${isComplete ? 'line-through' : 'none'};">${title}</span>
                                 <button class="btn btn-secondary" style="padding: 2px 6px; font-size: 11px;" onclick="window.ordoApp.goalsView.toggleActionEdit('${id}')">[ Edit ]</button>
@@ -248,6 +356,7 @@ class GoalsView {
                                     <button class="btn btn-secondary" style="padding: 2px 6px; font-size: 11px;" onclick="window.ordoApp.goalsView.toggleActionEdit('${id}')">[ Cancel ]</button>
                                 </div>
                             </div>
+                            ${this.renderTaskItems(id)}
                         </div>
                     `;
                 }).join('') : ''}
